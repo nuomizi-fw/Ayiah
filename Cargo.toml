@@ -1,0 +1,45 @@
+[package]
+name = "ayiah"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.97"
+axum = { version = "0.8.1", features = ["multipart", "ws"] }
+axum-extra = { version = "0.10.0", features = [
+    "cookie",
+    "multipart",
+    "typed-header",
+    "typed-routing",
+] }
+bcrypt = "0.17.0"
+chrono = "0.4.40"
+config = "0.15.11"
+data-encoding = "2.8.0"
+futures = "0.3.31"
+futures-core = "0.3.31"
+futures-util = "0.3.31"
+hyper = { version = "1.6.0", features = ["full"] }
+jsonwebtoken = "9.3.1"
+once_cell = "1.21.0"
+rand = "0.9.0"
+reqwest = "0.12.14"
+ring = "0.17.14"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+thiserror = "2.0.12"
+tokio = { version = "1.44.1", features = ["full"] }
+toml = "0.8.20"
+tower = { version = "0.5.2", features = ["full"] }
+tower-http = { version = "0.6.2", features = ["full"] }
+tracing = "0.1.41"
+tracing-appender = "0.2.3"
+tracing-subscriber = { version = "0.3.19", features = ["chrono", "env-filter"] }
+utoipa = { version = "5.3.1", features = ["axum_extras", "openapi_extensions"] }
+utoipa-redoc = { version = "6.0.0", features = ["axum"] }
+uuid = { version = "1.15.1", features = ["v4"] }
+
+[profile.release]
+lto = true
+strip = true
+codegen-units = 1
