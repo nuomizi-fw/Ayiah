@@ -1,5 +1,4 @@
 use std::path::Path;
-use tracing::info;
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
 use tracing_subscriber::{
     EnvFilter, Registry,
