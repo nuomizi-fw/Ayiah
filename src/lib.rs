@@ -11,6 +11,7 @@ pub mod context;
 pub mod entity;
 pub mod error;
 pub mod graceful_shutdown;
+pub mod logging;
 pub mod migration;
 
 pub type ApiResult<T> = std::result::Result<ApiResponse<T>, AyiahError>;

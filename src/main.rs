@@ -7,22 +7,18 @@ use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 use tracing::info;
 
-use ayiah::{config::ConfigManager, graceful_shutdown::shutdown_signal};
+use ayiah::{config::ConfigManager, graceful_shutdown::shutdown_signal, logging};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize logging
-    tracing_subscriber::fmt::init();
-
     // Load configuration
     let config_path = env::var("AYIAH_CONFIG_PATH").map(PathBuf::from).ok();
 
     // Initialize config manager
     let config_manager = ConfigManager::init(config_path)?;
 
-    // Print configuration (sensitive info is redacted)
-    let config_display = config_manager.display();
-    info!("Configuration loaded:\n{}", config_display);
+    // Initialize logging with configuration
+    logging::init(config_manager).map_err(|e| format!("Logging initialization error: {}", e))?;
 
     // Create CORS layer
     let cors_origins = {

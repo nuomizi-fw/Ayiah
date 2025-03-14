@@ -15,7 +15,7 @@ use tracing::{error, info};
 static CONFIG_MANAGER: OnceCell<ConfigManager> = OnceCell::new();
 
 // Default configuration path
-const DEFAULT_CONFIG_PATH: &str = "config/default.toml";
+const DEFAULT_CONFIG_PATH: &str = "config/ayiah.toml";
 const ENVIRONMENT_PREFIX: &str = "AYIAH";
 
 #[derive(Debug, Error)]
@@ -133,9 +133,6 @@ pub struct LoggingConfig {
 
     #[serde(default)]
     pub file_path: Option<String>,
-
-    #[serde(default)]
-    pub json_format: bool,
 }
 
 impl Default for LoggingConfig {
@@ -143,7 +140,6 @@ impl Default for LoggingConfig {
         Self {
             level: "info".to_string(),
             file_path: None,
-            json_format: false,
         }
     }
 }
@@ -258,31 +254,5 @@ impl ConfigManager {
         // Deserialize the configuration
         let app_config: AppConfig = config.try_deserialize()?;
         Ok(app_config)
-    }
-
-    /// Display current configuration (with sensitive information redacted)
-    pub fn display(&self) -> String {
-        let config = self.config.read();
-        let mut config_clone = config.clone();
-
-        // Redact sensitive information
-        if !config_clone.auth.jwt_secret.is_empty() {
-            config_clone.auth.jwt_secret = format!(
-                "{}***",
-                &config_clone.auth.jwt_secret[..3.min(config_clone.auth.jwt_secret.len())]
-            );
-        }
-
-        // Redact database connection string
-        if config_clone.database.url.contains("password=")
-            || config_clone.database.url.contains("@")
-        {
-            config_clone.database.url = "[REDACTED]".to_string();
-        }
-
-        match toml::to_string_pretty(&config_clone) {
-            Ok(s) => s,
-            Err(_) => format!("{:?}", config_clone),
-        }
     }
 }

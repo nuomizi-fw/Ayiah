@@ -30,8 +30,15 @@ parking_lot = "0.12.1"
 rand = "0.9.0"
 reqwest = "0.12.14"
 ring = "0.17.14"
-sea-orm = { version = "1.1.7", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros"] }
-sea-orm-migration = { version = "1.1.7", features = ["runtime-tokio-rustls", "sqlx-sqlite"] }
+sea-orm = { version = "1.1.7", features = [
+    "sqlx-sqlite",
+    "runtime-tokio-rustls",
+    "macros",
+] }
+sea-orm-migration = { version = "1.1.7", features = [
+    "runtime-tokio-rustls",
+    "sqlx-sqlite",
+] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 tempfile = "3.19.0"
@@ -42,7 +49,11 @@ tower = { version = "0.5.2", features = ["full"] }
 tower-http = { version = "0.6.2", features = ["full"] }
 tracing = "0.1"
 tracing-appender = "0.2.3"
-tracing-subscriber = { version = "0.3.19", features = ["chrono", "env-filter"] }
+tracing-subscriber = { version = "0.3.18", features = [
+    "env-filter",
+    "json",
+    "chrono",
+] }
 utoipa = { version = "5.3.1", features = ["axum_extras", "openapi_extensions"] }
 utoipa-redoc = { version = "6.0.0", features = ["axum"] }
 uuid = { version = "1.16.0", features = ["v4"] }
