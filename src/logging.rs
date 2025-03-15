@@ -16,7 +16,8 @@ pub fn init(config_manager: &'static ConfigManager) -> Result<(), String> {
     // Initialize the base subscriber with filter
     let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
         EnvFilter::new(format!(
-            "ayiah={},tower_http=debug,axum::rejection=trace",
+            "{}={},tower_http=debug,axum::rejection=trace",
+            env!("CARGO_CRATE_NAME"),
             log_config.level
         ))
     });
@@ -28,10 +29,7 @@ pub fn init(config_manager: &'static ConfigManager) -> Result<(), String> {
     let fmt_layer = fmt::layer()
         .with_target(true)
         .with_level(true)
-        .with_file(true)
-        .with_timer(ChronoUtc::new("%F %T".to_string()))
-        .with_line_number(true)
-        .with_span_events(fmt::format::FmtSpan::ACTIVE);
+        .with_timer(ChronoUtc::new("%F %T".to_string()));
 
     if let Some(file_path) = &log_config.file_path {
         // Log to file with daily rotation

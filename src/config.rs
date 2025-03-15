@@ -66,9 +66,6 @@ pub struct ServerConfig {
 
     #[serde(default)]
     pub workers: usize,
-
-    #[serde(default)]
-    pub cors_origins: Vec<String>,
 }
 
 impl Default for ServerConfig {
@@ -77,7 +74,6 @@ impl Default for ServerConfig {
             host: "127.0.0.1".to_string(),
             port: 3000,
             workers: num_cpus::get(),
-            cors_origins: vec!["*".to_string()],
         }
     }
 }
