@@ -1,6 +1,6 @@
-use std::{env, net::SocketAddr, path::PathBuf};
+use std::{env, net::SocketAddr, path::PathBuf, sync::Arc};
 
-use axum::{Router, http::header, middleware};
+use axum::{Extension, Router, http::header, middleware};
 use tokio::net::TcpListener;
 use tower_http::{
     compression::CompressionLayer, cors::CorsLayer, propagate_header::PropagateHeaderLayer,
@@ -8,7 +8,11 @@ use tower_http::{
 use tracing::info;
 
 use ayiah::{
-    config::ConfigManager, graceful_shutdown::shutdown_signal, logging, middleware::logger, routes,
+    app::state::AppState,
+    config::ConfigManager,
+    middleware::logger,
+    routes,
+    utils::{graceful_shutdown::shutdown_signal, logging},
 };
 
 #[tokio::main]
@@ -20,11 +24,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config_manager = ConfigManager::init(config_path)?;
 
     // Initialize logging with configuration
+    // Note: we're passing the manager directly as required by the logging module
     logging::init(config_manager).map_err(|e| format!("Logging initialization error: {}", e))?;
+
+    // Initialize application state
+    let app_state = AppState::init(config_manager.clone()).await?;
 
     // Create application router
     let app = Router::new()
         .merge(routes::mount())
+        .layer(Extension(Arc::new(app_state))) // Add AppState as Extension
+        .layer(Extension(Arc::new(config_manager.clone()))) // Add ConfigManager directly for middleware
         .layer(middleware::from_fn(logger))
         .layer(CompressionLayer::new())
         .layer(PropagateHeaderLayer::new(header::HeaderName::from_static(
