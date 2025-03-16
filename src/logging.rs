@@ -27,9 +27,10 @@ pub fn init(config_manager: &'static ConfigManager) -> Result<(), String> {
 
     // Create a pretty formatter for human-readable output
     let fmt_layer = fmt::layer()
-        .with_target(true)
+        .with_target(false)
         .with_level(true)
-        .with_timer(ChronoUtc::new("%F %T".to_string()));
+        .with_timer(ChronoUtc::new("%F %T".to_string()))
+        .with_ansi(true);
 
     if let Some(file_path) = &log_config.file_path {
         // Log to file with daily rotation

@@ -1,16 +1,15 @@
 use std::{env, net::SocketAddr, path::PathBuf};
 
-use axum::{Router, http::header};
+use axum::{Router, http::header, middleware};
 use tokio::net::TcpListener;
 use tower_http::{
-    compression::CompressionLayer,
-    cors::CorsLayer,
-    propagate_header::PropagateHeaderLayer,
-    trace::{DefaultMakeSpan, TraceLayer},
+    compression::CompressionLayer, cors::CorsLayer, propagate_header::PropagateHeaderLayer,
 };
 use tracing::info;
 
-use ayiah::{config::ConfigManager, graceful_shutdown::shutdown_signal, logging, routes};
+use ayiah::{
+    config::ConfigManager, graceful_shutdown::shutdown_signal, logging, middleware::logger, routes,
+};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -26,9 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create application router
     let app = Router::new()
         .merge(routes::mount())
-        .layer(
-            TraceLayer::new_for_http().make_span_with(DefaultMakeSpan::new().include_headers(true)),
-        )
+        .layer(middleware::from_fn(logger))
         .layer(CompressionLayer::new())
         .layer(PropagateHeaderLayer::new(header::HeaderName::from_static(
             "x-request-id",
