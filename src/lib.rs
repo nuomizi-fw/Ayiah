@@ -8,7 +8,6 @@ use serde::{Deserialize, Serialize};
 
 pub mod app;
 pub mod config;
-pub mod context;
 pub mod entity;
 pub mod error;
 pub mod middleware;
