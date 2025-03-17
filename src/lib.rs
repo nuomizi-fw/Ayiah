@@ -11,6 +11,7 @@ pub mod entity;
 pub mod error;
 pub mod middleware;
 pub mod migration;
+pub mod models;
 pub mod routes;
 pub mod utils;
 

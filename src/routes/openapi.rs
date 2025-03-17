@@ -2,27 +2,26 @@ use axum::Router;
 use utoipa::OpenApi;
 use utoipa_scalar::{Scalar, Servable};
 
-use crate::entity::{
-    user, user_preferences
+use crate::models::{
+    user::{CreateUserRequest, UpdateUserRequest},
+    user_preferences::SetUserPreferenceRequest,
 };
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(),
+    info(title = "Ayiah API", version = "0.1.0", description = "Ayiah Media Server API"),
     components(
         schemas(
             // Auth schemas would go here
 
-            // User schemas
-            user::Model,
-            user::UserResponse,
-            user::CreateUserRequest,
-            user::UpdateUserRequest,
+            // Entity schemas through aliasing
+            // crate::entity::user::Model,
+            // crate::entity::user_preferences::Model,
 
-            // User preference schemas
-            user_preferences::Model,
-            user_preferences::UserPreferenceResponse,
-            user_preferences::SetUserPreferenceRequest,
+            // Request/response schemas for operations
+            CreateUserRequest,
+            UpdateUserRequest,
+            SetUserPreferenceRequest,
         )
     ),
     tags(
