@@ -63,9 +63,6 @@ pub struct ServerConfig {
 
     #[serde(default)]
     pub port: u16,
-
-    #[serde(default)]
-    pub workers: usize,
 }
 
 impl Default for ServerConfig {
@@ -73,7 +70,6 @@ impl Default for ServerConfig {
         Self {
             host: "127.0.0.1".to_string(),
             port: 3000,
-            workers: num_cpus::get(),
         }
     }
 }

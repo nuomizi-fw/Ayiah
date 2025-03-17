@@ -7,12 +7,10 @@ use error::AyiahError;
 use serde::{Deserialize, Serialize};
 
 pub mod app;
-pub mod config;
 pub mod entity;
 pub mod error;
 pub mod middleware;
 pub mod migration;
-pub mod repository;
 pub mod routes;
 pub mod utils;
 

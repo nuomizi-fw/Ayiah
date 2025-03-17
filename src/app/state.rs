@@ -2,9 +2,12 @@ use std::sync::Arc;
 
 use axum::extract::FromRef;
 use sea_orm::DatabaseConnection;
+use sea_orm_migration::MigratorTrait;
 use tokio::sync::RwLock;
 
-use crate::config::ConfigManager;
+use crate::migration::Migrator;
+
+use super::config::ConfigManager;
 
 /// AppState holds all shared application resources
 #[derive(Clone)]
@@ -68,6 +71,9 @@ async fn establish_database_connection(
 
     // Connect to database
     let conn = sea_orm::Database::connect(&db_url).await?;
+
+    // Migrate database
+    Migrator::up(&conn, None).await.unwrap();
 
     Ok(conn)
 }

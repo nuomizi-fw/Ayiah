@@ -6,7 +6,7 @@ use tracing_subscriber::{
     prelude::*,
 };
 
-use crate::config::ConfigManager;
+use crate::app::config::ConfigManager;
 
 /// Initialize the logging system based on configuration
 pub fn init(config_manager: &'static ConfigManager) -> Result<(), String> {

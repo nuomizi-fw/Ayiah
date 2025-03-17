@@ -8,8 +8,7 @@ use tower_http::{
 use tracing::info;
 
 use ayiah::{
-    app::state::AppState,
-    config::ConfigManager,
+    app::{config::ConfigManager, state::AppState},
     middleware::logger,
     routes,
     utils::{graceful_shutdown::shutdown_signal, logging},
