@@ -53,7 +53,7 @@ impl JwtClaims {
         JwtClaims {
             sub,
             exp: (now + chrono::Duration::hours(config.auth.jwt_expiry_hours as i64)).timestamp(),
-            iss: "ComikNet".to_string(),
+            iss: "Ayiah".to_string(),
             nbf: now.timestamp(),
         }
     }
@@ -99,7 +99,6 @@ where
             .await
             .map_err(|_| AyiahError::AuthError(AuthError::InvalidToken))?;
         // Decode the user data
-
         let token_data = JwtClaims::decode_jwt(bearer.token())
             .map_err(|_| AyiahError::AuthError(AuthError::InvalidToken))?;
 

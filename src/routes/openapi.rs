@@ -11,7 +11,7 @@ use crate::{
 #[openapi(
     info(title = "Ayiah API", version = "0.1.0", description = "Ayiah Media Server API"),
     paths(
-        openapi
+        openapi,
     ),
     components(
         schemas(
@@ -28,6 +28,7 @@ use crate::{
         )
     ),
     tags(
+        (name = "Common", description = "Common operations"),
         (name = "Auth", description = "Authentication and authorization"),
         (name = "User", description = "User management"),
         (name = "User Preference", description = "User preference management"),
@@ -38,10 +39,15 @@ struct ApiDoc;
 /// Return JSON version of an OpenAPI schema
 #[utoipa::path(
     get,
+    operation_id = "openapi",
     path = "/openapi.json",
+    tag = "Common",
+    request_body(),
     responses(
         (status = 200, description = "JSON file", body = ())
-    )
+    ),
+    params(),
+    security()
 )]
 async fn openapi() -> Json<utoipa::openapi::OpenApi> {
     Json(ApiDoc::openapi())
@@ -50,5 +56,5 @@ async fn openapi() -> Json<utoipa::openapi::OpenApi> {
 pub fn mount() -> Router {
     Router::new()
         .route("/openapi.json", get(openapi))
-        .merge(Scalar::with_url("/scalar", ApiDoc::openapi()))
+        .merge(Scalar::with_url("/openapi", ApiDoc::openapi()))
 }
