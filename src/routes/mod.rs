@@ -1,3 +1,5 @@
+use axum::Router;
+
 pub mod api;
 pub mod openapi;
 

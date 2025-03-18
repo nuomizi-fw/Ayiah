@@ -22,8 +22,8 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(UserPreferences::UserId).uuid().not_null())
                     .col(ColumnDef::new(UserPreferences::Key).string().not_null())
                     .col(ColumnDef::new(UserPreferences::Value).json().not_null())
-                    .col(ColumnDef::new(UserPreferences::CreatedAt).timestamp_with_time_zone().not_null())
-                    .col(ColumnDef::new(UserPreferences::UpdatedAt).timestamp_with_time_zone().not_null())
+                    .col(ColumnDef::new(UserPreferences::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(UserPreferences::UpdatedAt).timestamp().not_null())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_preferences_user")
