@@ -6,32 +6,12 @@ use hyper::StatusCode;
 use serde_json::json;
 
 #[derive(thiserror::Error, Debug)]
-#[error(transparent)]
-pub struct AyiahError(#[from] ErrorKind);
-
-impl AyiahError {
-    pub fn code(&self) -> (StatusCode, String) {
-        self.0.code()
-    }
-}
-
-// Implement Axum's IntoResponse for our error type
-impl IntoResponse for AyiahError {
-    fn into_response(self) -> Response {
-        let (status_code, message) = self.code();
-        let body = Json(json!({
-            "code": status_code.as_u16(),
-            "message": message,
-        }));
-
-        (status_code, body).into_response()
-    }
-}
-
-#[derive(thiserror::Error, Debug)]
-pub enum ErrorKind {
+pub enum AyiahError {
     #[error("{0}")]
     ApiError(#[from] ApiError),
+
+    #[error("{0}")]
+    AuthError(#[from] AuthError),
 
     #[error("{0}")]
     DbError(#[from] sea_orm::DbErr),
@@ -49,10 +29,11 @@ pub enum ErrorKind {
     JwtError(#[from] jsonwebtoken::errors::Error),
 }
 
-impl ErrorKind {
+impl AyiahError {
     fn code(&self) -> (StatusCode, String) {
         match self {
             Self::ApiError(err) => err.code(),
+            Self::AuthError(err) => err.code(),
             Self::DbError(err) => {
                 tracing::error!("Database error: {}", err);
                 (
@@ -86,6 +67,19 @@ impl ErrorKind {
     }
 }
 
+// Implement Axum's IntoResponse for our error type
+impl IntoResponse for AyiahError {
+    fn into_response(self) -> Response {
+        let (status_code, message) = self.code();
+        let body = Json(json!({
+            "code": status_code.as_u16(),
+            "message": message,
+        }));
+
+        (status_code, body).into_response()
+    }
+}
+
 #[derive(thiserror::Error, Debug)]
 pub enum ApiError {
     #[error("{0}")]
@@ -116,6 +110,37 @@ impl ApiError {
             Self::NotFound(msg) => (StatusCode::NOT_FOUND, msg.clone()),
             Self::Conflict(msg) => (StatusCode::CONFLICT, msg.clone()),
             Self::InternalServerError(msg) => (StatusCode::INTERNAL_SERVER_ERROR, msg.clone()),
+        }
+    }
+}
+
+#[derive(thiserror::Error, Debug)]
+pub enum AuthError {
+    #[error("Invalid token")]
+    InvalidToken,
+
+    #[error("Token creation failed")]
+    TokenCreation,
+
+    #[error("Missing authentication")]
+    MissingAuth,
+}
+
+impl AuthError {
+    fn code(&self) -> (StatusCode, String) {
+        match self {
+            Self::InvalidToken => (
+                StatusCode::UNAUTHORIZED,
+                "Invalid authentication token".to_string(),
+            ),
+            Self::TokenCreation => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Failed to create authentication token".to_string(),
+            ),
+            Self::MissingAuth => (
+                StatusCode::UNAUTHORIZED,
+                "Authentication required".to_string(),
+            ),
         }
     }
 }

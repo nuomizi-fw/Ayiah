@@ -1,16 +1,9 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
-/// Schema alias for user::Model
-#[derive(Serialize, Deserialize, ToSchema)]
-#[schema(as = crate::entity::user::Model)]
-pub struct Model {
-    id: String,
-}
-
 /// Request model for creating a new user
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct CreateUserRequest {
+pub struct CreateUserPayload {
     /// Unique username (required)
     pub username: String,
     /// User's email address (required)
@@ -25,7 +18,7 @@ pub struct CreateUserRequest {
 
 /// Request model for updating an existing user
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct UpdateUserRequest {
+pub struct UpdateUserPayload {
     /// User's email address (optional)
     pub email: Option<String>,
     /// User's password (optional, will be hashed)

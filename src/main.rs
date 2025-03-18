@@ -9,9 +9,9 @@ use tracing::info;
 
 use ayiah::{
     app::{config::ConfigManager, state::AppState},
-    middleware::logger,
+    middleware::logger as middleware_logger,
     routes,
-    utils::{graceful_shutdown::shutdown_signal, logging},
+    utils::{graceful_shutdown::shutdown_signal, logger},
 };
 
 #[tokio::main]
@@ -24,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize logging with configuration
     // Note: we're passing the manager directly as required by the logging module
-    logging::init(config_manager).map_err(|e| format!("Logging initialization error: {}", e))?;
+    logger::init(config_manager).map_err(|e| format!("Logging initialization error: {}", e))?;
 
     // Initialize application state
     let app_state = AppState::init(config_manager.clone()).await?;
@@ -34,7 +34,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .merge(routes::mount())
         .layer(Extension(Arc::new(app_state))) // Add AppState as Extension
         .layer(Extension(Arc::new(config_manager.clone()))) // Add ConfigManager directly for middleware
-        .layer(middleware::from_fn(logger))
+        .layer(middleware::from_fn(middleware_logger))
         .layer(CompressionLayer::new())
         .layer(PropagateHeaderLayer::new(header::HeaderName::from_static(
             "x-request-id",

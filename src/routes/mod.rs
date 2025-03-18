@@ -3,8 +3,8 @@ use axum::Router;
 pub mod api;
 pub mod openapi;
 
-pub fn mount() -> axum::Router {
-    axum::Router::new()
+pub fn mount() -> Router {
+    Router::new()
         .merge(openapi::mount())
         .nest("/api", api::mount())
 }
