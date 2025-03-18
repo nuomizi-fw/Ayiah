@@ -1,9 +1,12 @@
 use std::{env, net::SocketAddr, path::PathBuf, sync::Arc};
 
-use axum::{Extension, Router, http::header, middleware};
+use axum::{Extension, Router, http::HeaderName, middleware};
 use tokio::net::TcpListener;
 use tower_http::{
-    compression::CompressionLayer, cors::CorsLayer, propagate_header::PropagateHeaderLayer,
+    compression::CompressionLayer,
+    cors::CorsLayer,
+    propagate_header::PropagateHeaderLayer,
+    request_id::{MakeRequestUuid, SetRequestIdLayer},
 };
 use tracing::info;
 
@@ -36,9 +39,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .layer(Extension(Arc::new(config_manager.clone()))) // Add ConfigManager directly for middleware
         .layer(middleware::from_fn(middleware_logger))
         .layer(CompressionLayer::new())
-        .layer(PropagateHeaderLayer::new(header::HeaderName::from_static(
+        .layer(PropagateHeaderLayer::new(HeaderName::from_static(
             "x-request-id",
         )))
+        .layer(SetRequestIdLayer::new(
+            HeaderName::from_static("x-request-id"),
+            MakeRequestUuid,
+        ))
         .layer(CorsLayer::permissive());
 
     // Get configured host and port

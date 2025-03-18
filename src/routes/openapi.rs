@@ -44,7 +44,7 @@ struct ApiDoc;
     tag = "Common",
     request_body(),
     responses(
-        (status = 200, description = "JSON file", body = ())
+        (status = 200, description = "OpenAPI JSON Schema", body = ()),
     ),
     params(),
     security()

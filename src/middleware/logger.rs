@@ -13,6 +13,12 @@ pub async fn logger(request: Request<Body>, next: Next) -> Response<Body> {
     let method = request.method().clone();
     let uri_path = request.uri().path().to_string();
     let version = request.version();
+    let request_id = request
+        .headers()
+        .get("x-request-id")
+        .map(|v| v.to_str().unwrap_or("-"))
+        .unwrap_or("-")
+        .to_string();
 
     // Get user agent
     let user_agent = request
@@ -42,6 +48,7 @@ pub async fn logger(request: Request<Body>, next: Next) -> Response<Body> {
         status = %status,
         ?latency,
         user_agent = %user_agent,
+        request_id = ?request_id,
     );
 
     response
