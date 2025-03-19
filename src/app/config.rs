@@ -8,8 +8,9 @@ use config::{Config as ConfigBuilder, Environment, File as ConfigFile};
 use once_cell::sync::OnceCell;
 use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
-use tracing::{error, info};
+use tracing::info;
+
+use crate::error::ConfigError;
 
 // Global configuration manager instance
 static CONFIG_MANAGER: OnceCell<ConfigManager> = OnceCell::new();
@@ -17,21 +18,6 @@ static CONFIG_MANAGER: OnceCell<ConfigManager> = OnceCell::new();
 // Default configuration path
 const DEFAULT_CONFIG_PATH: &str = "config/ayiah.toml";
 const ENVIRONMENT_PREFIX: &str = "AYIAH";
-
-#[derive(Debug, Error)]
-pub enum ConfigError {
-    #[error("Failed to load configuration: {0}")]
-    LoadError(#[from] config::ConfigError),
-
-    #[error("Failed to parse configuration: {0}")]
-    ParseError(String),
-
-    #[error("Failed to write configuration: {0}")]
-    WriteError(String),
-
-    #[error("Configuration not initialized")]
-    NotInitialized,
-}
 
 /// Configuration manager
 #[derive(Debug, Clone)]
@@ -77,22 +63,42 @@ impl Default for ServerConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DatabaseConfig {
     #[serde(default)]
-    pub url: String,
+    pub host: String,
 
     #[serde(default)]
-    pub pool_size: u32,
+    pub port: u16,
 
     #[serde(default)]
-    pub timeout_seconds: u64,
+    pub username: String,
+
+    #[serde(default)]
+    pub password: String,
+
+    #[serde(default)]
+    pub database: String,
 }
 
 impl Default for DatabaseConfig {
     fn default() -> Self {
         Self {
-            url: "sqlite:ayiah.db?mode=rwc".to_string(),
-            pool_size: 5,
-            timeout_seconds: 30,
+            host: "localhost".to_string(),
+            port: 5432,
+            username: "postgres".to_string(),
+            password: "postgres".to_string(),
+            database: "ayiah".to_string(),
         }
+    }
+}
+
+impl DatabaseConfig {
+    /// Get the connection URL with all configured parameters including SSL settings
+    pub fn get_connection_url(&self) -> String {
+        let url = format!(
+            "postgres://{}:{}@{}:{}/{}",
+            self.username, self.password, self.host, self.port, self.database
+        );
+
+        url
     }
 }
 

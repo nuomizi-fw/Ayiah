@@ -66,7 +66,7 @@ async fn establish_database_connection(
     // Read database configuration
     let db_url = {
         let config = config.read();
-        config.database.url.clone()
+        config.database.get_connection_url()
     };
 
     // Connect to database

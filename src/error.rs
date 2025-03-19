@@ -14,6 +14,9 @@ pub enum AyiahError {
     AuthError(#[from] AuthError),
 
     #[error("{0}")]
+    ConfigError(#[from] ConfigError),
+
+    #[error("{0}")]
     DbError(#[from] sea_orm::DbErr),
 
     #[error("{0}")]
@@ -34,6 +37,7 @@ impl AyiahError {
         match self {
             Self::ApiError(err) => err.code(),
             Self::AuthError(err) => err.code(),
+            Self::ConfigError(err) => err.code(),
             Self::DbError(err) => {
                 tracing::error!("Database error: {}", err);
                 (
@@ -140,6 +144,44 @@ impl AuthError {
             Self::MissingAuth => (
                 StatusCode::UNAUTHORIZED,
                 "Authentication required".to_string(),
+            ),
+        }
+    }
+}
+
+#[derive(thiserror::Error, Debug)]
+pub enum ConfigError {
+    #[error("Failed to load configuration: {0}")]
+    LoadError(#[from] config::ConfigError),
+
+    #[error("Failed to parse configuration: {0}")]
+    ParseError(String),
+
+    #[error("Failed to write configuration: {0}")]
+    WriteError(String),
+
+    #[error("Configuration not initialized")]
+    NotInitialized,
+}
+
+impl ConfigError {
+    fn code(&self) -> (StatusCode, String) {
+        match self {
+            Self::LoadError(err) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Failed to load configuration: {}", err),
+            ),
+            Self::ParseError(msg) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Failed to parse configuration: {}", msg),
+            ),
+            Self::WriteError(msg) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Failed to write configuration: {}", msg),
+            ),
+            Self::NotInitialized => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Configuration not initialized".to_string(),
             ),
         }
     }
