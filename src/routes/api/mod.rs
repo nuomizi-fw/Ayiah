@@ -4,5 +4,5 @@ pub mod users;
 
 /// Mount all API routes
 pub fn mount() -> Router {
-    Router::new()
+    Router::new().merge(users::mount())
 }

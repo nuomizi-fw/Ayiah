@@ -18,11 +18,11 @@ pub struct Model {
     pub avatar: Option<String>,
     pub is_admin: bool,
     #[schema(value_type = DateTime)]
-    pub created_at: DateTimeUtc,
+    pub created_at: DateTimeWithTimeZone,
     #[schema(value_type = DateTime)]
-    pub updated_at: DateTimeUtc,
+    pub updated_at: DateTimeWithTimeZone,
     #[schema(value_type = DateTime)]
-    pub last_login_at: Option<DateTimeUtc>,
+    pub last_login_at: Option<DateTimeWithTimeZone>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

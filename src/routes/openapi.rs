@@ -1,21 +1,49 @@
 use axum::{Json, Router, routing::get};
-use utoipa::OpenApi;
+use utoipa::{
+    Modify, OpenApi,
+    openapi::security::{Http, HttpAuthScheme, SecurityScheme},
+};
 use utoipa_scalar::{Scalar, Servable};
 
 use crate::{
     entity::user,
-    models::{CreateUserPayload, UpdateUserPayload},
+    models::user::{AuthBody, AuthPayload, CreateUserPayload, UpdateUserPayload},
 };
+
+use crate::routes::api::users::*;
+
+struct SecurityAddon;
+
+impl Modify for SecurityAddon {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        // Add JWT bearer security scheme component
+        if let Some(components) = openapi.components.as_mut() {
+            components.add_security_scheme(
+                "bearer_auth",
+                SecurityScheme::Http(Http::new(HttpAuthScheme::Bearer))
+            );
+        }
+    }
+}
 
 #[derive(OpenApi)]
 #[openapi(
     info(title = "Ayiah API", version = "0.1.0", description = "Ayiah Media Server API"),
     paths(
-        openapi,
+        // Common operations
+        crate::routes::openapi::openapi,
+
+        // User operations
+        crate::routes::api::users::register,
+        crate::routes::api::users::login,
+        crate::routes::api::users::me,
     ),
     components(
         schemas(
-            // Auth schemas would go here
+            // Auth schemas
+            LoginPayload,
+            AuthBody,
+            AuthPayload,
 
             // User schemas
             user::Model,
@@ -27,7 +55,8 @@ use crate::{
         (name = "Common", description = "Common operations"),
         (name = "Auth", description = "Authentication and authorization"),
         (name = "User", description = "User management"),
-    )
+    ),
+    modifiers(&SecurityAddon)
 )]
 struct ApiDoc;
 

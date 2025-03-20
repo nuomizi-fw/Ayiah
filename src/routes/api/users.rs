@@ -5,9 +5,10 @@ use axum::{
     routing::{get, post},
 };
 use chrono::Utc;
-use sea_orm::{ActiveValue, ColumnTrait, EntityTrait, QueryFilter};
+use sea_orm::{ActiveValue, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
+use utoipa::ToSchema;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -19,12 +20,12 @@ use crate::{
         user::{self},
     },
     error::{ApiError, AyiahError},
-    middleware::auth::{AuthBody, JwtClaims},
-    models::user::CreateUserPayload,
+    middleware::auth::JwtClaims,
+    models::user::{AuthBody, CreateUserPayload},
     utils::crypto::{generate_salt, hash_password, verify_password},
 };
 
-#[derive(Debug, Deserialize, Serialize, Validate)]
+#[derive(Debug, Deserialize, Serialize, Validate, ToSchema)]
 pub struct LoginPayload {
     #[validate(length(min = 3, message = "Username must be at least 3 characters"))]
     pub username: String,
@@ -33,13 +34,32 @@ pub struct LoginPayload {
 }
 
 pub fn mount() -> Router {
-    Router::new()
-        .route("/register", post(register))
-        .route("/login", post(login))
-        .route("/me", get(me))
+    Router::new().nest(
+        "/users",
+        Router::new()
+            .route("/register", post(register))
+            .route("/login", post(login))
+            .route("/me", get(me)),
+    )
 }
 
-async fn register(
+/// Register a new user account
+#[utoipa::path(
+    post,
+    operation_id = "register",
+    path = "/api/users/register",
+    tag = "Auth",
+    request_body = CreateUserPayload,
+    responses(
+        (status = 201, description = "User registered successfully", body = ()),
+        (status = 400, description = "Invalid input data", body = ()),
+        (status = 409, description = "Username or email already exists", body = ()),
+        (status = 500, description = "Internal server error", body = ()),
+    ),
+    params(),
+    security()
+)]
+pub async fn register(
     state: Extension<Arc<AppState>>,
     Json(payload): Json<CreateUserPayload>,
 ) -> ApiResult<()> {
@@ -71,6 +91,9 @@ async fn register(
         )));
     }
 
+    // Check if this is the first user (will be admin)
+    let is_first_user = User::find().count(db).await.map_err(AyiahError::from)? == 0;
+
     // Generate salt and hash password
     let salt = generate_salt();
     let hashed_password = hash_password(&payload.password, &salt);
@@ -84,9 +107,9 @@ async fn register(
         salt: ActiveValue::Set(salt),
         display_name: ActiveValue::Set(payload.display_name),
         avatar: ActiveValue::Set(payload.avatar),
-        is_admin: ActiveValue::Set(false),
-        created_at: ActiveValue::Set(Utc::now()),
-        updated_at: ActiveValue::Set(Utc::now()),
+        is_admin: ActiveValue::Set(is_first_user), // First user becomes admin
+        created_at: ActiveValue::Set(Utc::now().into()),
+        updated_at: ActiveValue::Set(Utc::now().into()),
         last_login_at: ActiveValue::Set(None),
     };
 
@@ -102,7 +125,23 @@ async fn register(
     })
 }
 
-async fn login(
+/// Login to obtain an authentication token
+#[utoipa::path(
+    post,
+    operation_id = "login",
+    path = "/api/users/login",
+    tag = "Auth",
+    request_body = LoginPayload,
+    responses(
+        (status = 200, description = "Login successful", body = AuthBody),
+        (status = 400, description = "Invalid input data", body = ()),
+        (status = 401, description = "Invalid username or password", body = ()),
+        (status = 500, description = "Internal server error", body = ()),
+    ),
+    params(),
+    security()
+)]
+pub async fn login(
     state: Extension<Arc<AppState>>,
     Json(payload): Json<LoginPayload>,
 ) -> ApiResult<AuthBody> {
@@ -129,8 +168,8 @@ async fn login(
 
     // Update last login time
     let mut user_active: user::ActiveModel = user.clone().into();
-    user_active.last_login_at = ActiveValue::Set(Some(Utc::now()));
-    user_active.updated_at = ActiveValue::Set(Utc::now());
+    user_active.last_login_at = ActiveValue::Set(Some(Utc::now().into()));
+    user_active.updated_at = ActiveValue::Set(Utc::now().into());
 
     User::update(user_active)
         .exec(db)
@@ -148,7 +187,23 @@ async fn login(
     })
 }
 
-async fn me(state: Extension<Arc<AppState>>, claims: JwtClaims) -> ApiResult<user::Model> {
+/// Get the current authenticated user profile
+#[utoipa::path(
+    get,
+    operation_id = "get_current_user",
+    path = "/api/users/me",
+    tag = "User",
+    responses(
+        (status = 200, description = "User profile retrieved", body = user::Model),
+        (status = 401, description = "Not authenticated", body = ()),
+        (status = 404, description = "User not found", body = ()),
+    ),
+    params(),
+    security(
+        ("bearer_auth" = [])
+    )
+)]
+pub async fn me(state: Extension<Arc<AppState>>, claims: JwtClaims) -> ApiResult<user::Model> {
     let db = &*state.db;
 
     let user_id = claims
