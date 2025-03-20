@@ -1,6 +1,5 @@
 use axum::Router;
 
-pub mod preferences;
 pub mod users;
 
 /// Mount all API routes

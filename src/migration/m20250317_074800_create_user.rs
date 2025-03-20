@@ -18,8 +18,9 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .unique_key(),
                     )
-                    .col(ColumnDef::new(User::Email).string().not_null().unique_key())
-                    .col(ColumnDef::new(User::Password).string().not_null())
+                    .col(ColumnDef::new(User::Email).string())
+                    .col(ColumnDef::new(User::HashedPassword).string().not_null())
+                    .col(ColumnDef::new(User::Salt).string().not_null())
                     .col(ColumnDef::new(User::DisplayName).string())
                     .col(ColumnDef::new(User::Avatar).string())
                     .col(
@@ -50,7 +51,8 @@ pub enum User {
     Id,
     Username,
     Email,
-    Password,
+    HashedPassword,
+    Salt,
     DisplayName,
     Avatar,
     IsAdmin,

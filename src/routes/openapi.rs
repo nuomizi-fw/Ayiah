@@ -3,8 +3,8 @@ use utoipa::OpenApi;
 use utoipa_scalar::{Scalar, Servable};
 
 use crate::{
-    entity::{user, user_preferences},
-    models::{CreateUserPayload, SetUserPreferencePayload, UpdateUserPayload},
+    entity::user,
+    models::{CreateUserPayload, UpdateUserPayload},
 };
 
 #[derive(OpenApi)]
@@ -21,17 +21,12 @@ use crate::{
             user::Model,
             CreateUserPayload,
             UpdateUserPayload,
-
-            // User preference schemas
-            user_preferences::Model,
-            SetUserPreferencePayload,
         )
     ),
     tags(
         (name = "Common", description = "Common operations"),
         (name = "Auth", description = "Authentication and authorization"),
         (name = "User", description = "User management"),
-        (name = "User Preference", description = "User preference management"),
     )
 )]
 struct ApiDoc;

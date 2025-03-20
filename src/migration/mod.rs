@@ -1,7 +1,6 @@
 use sea_orm_migration::{MigrationTrait, MigratorTrait};
 
 mod m20250317_074800_create_user;
-mod m20250317_074842_create_user_preferences;
 
 pub struct Migrator;
 
@@ -10,7 +9,6 @@ impl MigratorTrait for Migrator {
     fn migrations() -> Vec<Box<dyn MigrationTrait>> {
         vec![
             Box::new(m20250317_074800_create_user::Migration),
-            Box::new(m20250317_074842_create_user_preferences::Migration),
         ]
     }
 }

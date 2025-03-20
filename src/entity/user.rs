@@ -1,7 +1,8 @@
 use sea_orm::entity::prelude::*;
+use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, ToSchema)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize, ToSchema)]
 #[sea_orm(table_name = "user")]
 #[schema(as = User)]
 pub struct Model {
@@ -11,7 +12,8 @@ pub struct Model {
     pub username: String,
     #[sea_orm(unique)]
     pub email: String,
-    pub password: String,
+    pub hashed_password: String,
+    pub salt: String,
     pub display_name: Option<String>,
     pub avatar: Option<String>,
     pub is_admin: bool,
@@ -24,15 +26,6 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {
-    #[sea_orm(has_many = "super::user_preferences::Entity")]
-    UserPreferences,
-}
-
-impl Related<super::user_preferences::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UserPreferences.def()
-    }
-}
+pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
