@@ -7,14 +7,12 @@ use axum::{
 use chrono::Utc;
 use sea_orm::{ActiveValue, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
 use utoipa::ToSchema;
 use uuid::Uuid;
 use validator::Validate;
 
 use crate::{
-    ApiResponse, ApiResult,
-    app::state::AppState,
+    ApiResponse, ApiResult, Ctx,
     entity::{
         prelude::*,
         user::{self},
@@ -60,10 +58,10 @@ pub fn mount() -> Router {
     security()
 )]
 pub async fn register(
-    state: Extension<Arc<AppState>>,
+    Extension(ctx): Extension<Ctx>,
     Json(payload): Json<CreateUserPayload>,
 ) -> ApiResult<()> {
-    let db = &*state.db;
+    let db = &ctx.db;
 
     // Check if username already exists
     let user_exists = User::find()
@@ -142,10 +140,10 @@ pub async fn register(
     security()
 )]
 pub async fn login(
-    state: Extension<Arc<AppState>>,
+    Extension(ctx): Extension<Ctx>,
     Json(payload): Json<LoginPayload>,
 ) -> ApiResult<AuthBody> {
-    let db = &*state.db;
+    let db = &ctx.db;
 
     // Find user by username
     let user = User::find()
@@ -203,8 +201,8 @@ pub async fn login(
         ("bearer_auth" = [])
     )
 )]
-pub async fn me(state: Extension<Arc<AppState>>, claims: JwtClaims) -> ApiResult<user::Model> {
-    let db = &*state.db;
+pub async fn me(Extension(ctx): Extension<Ctx>, claims: JwtClaims) -> ApiResult<user::Model> {
+    let db = &ctx.db;
 
     let user_id = claims
         .sub

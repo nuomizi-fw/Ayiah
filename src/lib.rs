@@ -1,9 +1,13 @@
+use std::sync::Arc;
+
+use app::config::ConfigManager;
 use axum::{
     Json,
     http::StatusCode,
     response::{IntoResponse, Response},
 };
 use error::AyiahError;
+use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
 
 pub mod app;
@@ -34,3 +38,15 @@ where
         (StatusCode::OK, body).into_response()
     }
 }
+
+/// AppState holds all shared application resources
+#[derive(Clone)]
+pub struct Context {
+    /// Shared configuration manager
+    pub config: ConfigManager,
+
+    /// Database connection
+    pub db: DatabaseConnection,
+}
+
+pub type Ctx = Arc<Context>;

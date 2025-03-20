@@ -117,7 +117,7 @@ pub struct AuthConfig {
 impl Default for AuthConfig {
     fn default() -> Self {
         Self {
-            jwt_secret: "change_me_in_production".to_string(),
+            jwt_secret: "ayiah".to_string(),
             jwt_expiry_hours: 24,
             refresh_token_expiry_days: 7,
         }
