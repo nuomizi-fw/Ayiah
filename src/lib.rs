@@ -17,6 +17,7 @@ pub mod middleware;
 pub mod migration;
 pub mod models;
 pub mod routes;
+pub mod service;
 pub mod utils;
 
 pub type ApiResult<T> = std::result::Result<ApiResponse<T>, AyiahError>;

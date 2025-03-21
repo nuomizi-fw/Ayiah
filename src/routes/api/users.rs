@@ -5,7 +5,7 @@ use axum::{
     routing::{get, post},
 };
 use chrono::Utc;
-use sea_orm::{ActiveValue, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
+use sea_orm::ActiveValue;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use uuid::Uuid;
@@ -13,13 +13,11 @@ use validator::Validate;
 
 use crate::{
     ApiResponse, ApiResult, Ctx,
-    entity::{
-        prelude::*,
-        user::{self},
-    },
+    entity::user,
     error::{ApiError, AyiahError},
     middleware::auth::JwtClaims,
     models::user::{AuthBody, CreateUserPayload},
+    service::{mutation::Mutation, query::Query},
     utils::crypto::{generate_salt, hash_password, verify_password},
 };
 
@@ -64,12 +62,7 @@ pub async fn register(
     let db = &ctx.db;
 
     // Check if username already exists
-    let user_exists = User::find()
-        .filter(user::Column::Username.eq(&payload.username))
-        .one(db)
-        .await
-        .map_err(AyiahError::from)?;
-
+    let user_exists = Query::find_by_username(db, &payload.username).await?;
     if user_exists.is_some() {
         return Err(AyiahError::ApiError(ApiError::Conflict(
             "Username already taken".to_string(),
@@ -77,12 +70,7 @@ pub async fn register(
     }
 
     // Check if email already exists
-    let email_exists = User::find()
-        .filter(user::Column::Email.eq(&payload.email))
-        .one(db)
-        .await
-        .map_err(AyiahError::from)?;
-
+    let email_exists = Query::find_by_email(db, &payload.email).await?;
     if email_exists.is_some() {
         return Err(AyiahError::ApiError(ApiError::Conflict(
             "Email already registered".to_string(),
@@ -90,7 +78,7 @@ pub async fn register(
     }
 
     // Check if this is the first user (will be admin)
-    let is_first_user = User::find().count(db).await.map_err(AyiahError::from)? == 0;
+    let is_first_user = Query::count_users(db).await? == 0;
 
     // Generate salt and hash password
     let salt = generate_salt();
@@ -111,10 +99,7 @@ pub async fn register(
         last_login_at: ActiveValue::Set(None),
     };
 
-    User::insert(new_user)
-        .exec_with_returning(db)
-        .await
-        .map_err(AyiahError::from)?;
+    Mutation::create_user(db, new_user).await?;
 
     Ok(ApiResponse {
         code: StatusCode::CREATED.as_u16(),
@@ -146,11 +131,8 @@ pub async fn login(
     let db = &ctx.db;
 
     // Find user by username
-    let user = User::find()
-        .filter(user::Column::Username.eq(&payload.username))
-        .one(db)
-        .await
-        .map_err(AyiahError::from)?
+    let user = Query::find_by_username(db, &payload.username)
+        .await?
         .ok_or_else(|| {
             AyiahError::ApiError(ApiError::Unauthorized(
                 "Invalid username or password".to_string(),
@@ -169,10 +151,7 @@ pub async fn login(
     user_active.last_login_at = ActiveValue::Set(Some(Utc::now().into()));
     user_active.updated_at = ActiveValue::Set(Utc::now().into());
 
-    User::update(user_active)
-        .exec(db)
-        .await
-        .map_err(AyiahError::from)?;
+    Mutation::update_user(db, user_active).await?;
 
     // Generate JWT token
     let claims = JwtClaims::new(user.id.to_string());
@@ -209,10 +188,8 @@ pub async fn me(Extension(ctx): Extension<Ctx>, claims: JwtClaims) -> ApiResult<
         .parse::<Uuid>()
         .map_err(|_| AyiahError::ApiError(ApiError::BadRequest("Invalid user ID".to_string())))?;
 
-    let user = User::find_by_id(user_id)
-        .one(db)
-        .await
-        .map_err(AyiahError::from)?
+    let user = Query::find_by_id(db, user_id)
+        .await?
         .ok_or_else(|| AyiahError::ApiError(ApiError::NotFound("User not found".to_string())))?;
 
     Ok(ApiResponse {

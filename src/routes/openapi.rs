@@ -10,7 +10,7 @@ use crate::{
     models::user::{AuthBody, AuthPayload, CreateUserPayload, UpdateUserPayload},
 };
 
-use crate::routes::api::users::*;
+pub use super::api::users::*;
 
 struct SecurityAddon;
 
@@ -20,7 +20,7 @@ impl Modify for SecurityAddon {
         if let Some(components) = openapi.components.as_mut() {
             components.add_security_scheme(
                 "bearer_auth",
-                SecurityScheme::Http(Http::new(HttpAuthScheme::Bearer))
+                SecurityScheme::Http(Http::new(HttpAuthScheme::Bearer)),
             );
         }
     }
@@ -31,12 +31,12 @@ impl Modify for SecurityAddon {
     info(title = "Ayiah API", version = "0.1.0", description = "Ayiah Media Server API"),
     paths(
         // Common operations
-        crate::routes::openapi::openapi,
+        openapi,
 
         // User operations
-        crate::routes::api::users::register,
-        crate::routes::api::users::login,
-        crate::routes::api::users::me,
+        register,
+        login,
+        me,
     ),
     components(
         schemas(
