@@ -18,6 +18,3 @@ target/
 
 # Ayiah config
 config/ayiah.toml
-
-# Ayiah database
-ayiah.db
