@@ -57,12 +57,16 @@ reqwest = { version = "0.12.15", features = ["json"] }
 ring = "0.17.14"
 sea-orm = { version = "1.1.7", features = [
     "sqlx-sqlite",
-    "runtime-tokio-rustls",
+    "sqlx-postgres",
+    "sqlx-mysql",
     "macros",
+    "runtime-tokio-rustls",
 ] }
 sea-orm-migration = { version = "1.1.7", features = [
     "runtime-tokio-rustls",
     "sqlx-sqlite",
+    "sqlx-postgres",
+    "sqlx-mysql",
 ] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"

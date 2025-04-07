@@ -55,7 +55,7 @@ pub struct ServerConfig {
 impl Default for ServerConfig {
     fn default() -> Self {
         Self {
-            host: "[::]".to_string(), // This listens on IPv6 and IPv4
+            host: "127.0.0.1".to_string(),
             port: 7590,
         }
     }

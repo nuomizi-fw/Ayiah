@@ -58,3 +58,6 @@ yarn-error.log*
 
 # Ayiah config
 ayiah.toml
+
+# Ayiah database
+ayiah.db
