@@ -13,7 +13,8 @@ use tracing::info;
 
 use ayiah::{
     Context,
-    app::{config::ConfigManager, db::init_db},
+    app::config::ConfigManager,
+    db,
     middleware::logger as middleware_logger,
     migration::Migrator,
     routes,
@@ -33,11 +34,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     logger::init(config_manager).map_err(|e| format!("Logging initialization error: {}", e))?;
 
     // Connect to database
-    let conn = init_db().await?;
+    let conn = db::init().await?;
 
     // Migrate database
     Migrator::up(&conn, None).await.unwrap();
-
     // Create application router
     let app = Router::new()
         .merge(routes::mount())

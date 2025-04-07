@@ -1,9 +1,9 @@
 use crate::error::AyiahError;
 
-use super::config::ConfigManager;
+use crate::app::config::ConfigManager;
 use sea_orm::{Database, DatabaseConnection};
 
-pub async fn init_db() -> Result<DatabaseConnection, AyiahError> {
+pub async fn init() -> Result<DatabaseConnection, AyiahError> {
     let db_config = {
         let config = ConfigManager::instance()
             .expect("Configuration not initialized")

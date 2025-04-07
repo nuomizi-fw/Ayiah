@@ -11,6 +11,7 @@ use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
 
 pub mod app;
+pub mod db;
 pub mod entity;
 pub mod error;
 pub mod middleware;
