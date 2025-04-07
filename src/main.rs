@@ -13,7 +13,7 @@ use tracing::info;
 
 use ayiah::{
     Context,
-    app::config::ConfigManager,
+    app::{config::ConfigManager, db::init_db},
     middleware::logger as middleware_logger,
     migration::Migrator,
     routes,
@@ -32,14 +32,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Note: we're passing the manager directly as required by the logging module
     logger::init(config_manager).map_err(|e| format!("Logging initialization error: {}", e))?;
 
-    // Read database configuration
-    let db_url = {
-        let config = config_manager.read();
-        config.database.get_connection_url()
-    };
-
     // Connect to database
-    let conn = sea_orm::Database::connect(&db_url).await?;
+    let conn = init_db().await?;
 
     // Migrate database
     Migrator::up(&conn, None).await.unwrap();

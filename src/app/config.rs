@@ -55,8 +55,8 @@ pub struct ServerConfig {
 impl Default for ServerConfig {
     fn default() -> Self {
         Self {
-            host: "127.0.0.1".to_string(),
-            port: 3000,
+            host: "[::]".to_string(), // This listens on IPv6 and IPv4
+            port: 7590,
         }
     }
 }
@@ -64,42 +64,42 @@ impl Default for ServerConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DatabaseConfig {
     #[serde(default)]
+    pub db_type: String,
+
+    #[serde(default)]
     pub host: String,
 
     #[serde(default)]
     pub port: u16,
 
     #[serde(default)]
-    pub username: String,
+    pub user: String,
 
     #[serde(default)]
     pub password: String,
 
     #[serde(default)]
-    pub database: String,
+    pub name: String,
+
+    #[serde(default)]
+    pub db_file: String,
+
+    #[serde(default)]
+    pub table_prefix: String,
 }
 
 impl Default for DatabaseConfig {
     fn default() -> Self {
         Self {
-            host: "localhost".to_string(),
-            port: 5432,
-            username: "postgres".to_string(),
-            password: "postgres".to_string(),
-            database: "ayiah".to_string(),
+            db_type: "sqlite".to_string(),
+            host: "".to_string(),
+            port: 0,
+            user: "".to_string(),
+            password: "".to_string(),
+            name: "".to_string(),
+            db_file: "ayiah.db".to_string(),
+            table_prefix: "".to_string(),
         }
-    }
-}
-
-impl DatabaseConfig {
-    /// Get the connection URL with all configured parameters including SSL settings
-    pub fn get_connection_url(&self) -> String {
-        let url = format!(
-            "postgres://{}:{}@{}:{}/{}",
-            self.username, self.password, self.host, self.port, self.database
-        );
-
-        url
     }
 }
 
