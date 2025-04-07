@@ -1,5 +1,6 @@
 use std::{
     fs,
+    net::SocketAddr,
     path::{Path, PathBuf},
     sync::Arc,
 };
@@ -111,6 +112,9 @@ pub struct AuthConfig {
     pub jwt_expiry_hours: u64,
 
     #[serde(default)]
+    pub pbkdf2_iterations: u32,
+
+    #[serde(default)]
     pub refresh_token_expiry_days: u64,
 }
 
@@ -119,6 +123,7 @@ impl Default for AuthConfig {
         Self {
             jwt_secret: "ayiah".to_string(),
             jwt_expiry_hours: 24,
+            pbkdf2_iterations: 100000,
             refresh_token_expiry_days: 7,
         }
     }
@@ -172,6 +177,14 @@ impl ConfigManager {
         });
 
         Ok(manager)
+    }
+
+    pub fn socket_addr(&self) -> Result<SocketAddr, ConfigError> {
+        let config = self.config.read();
+        let addr = format!("{}:{}", config.server.host, config.server.port)
+            .parse::<SocketAddr>()
+            .expect("Invalid server address configuration");
+        Ok(addr)
     }
 
     /// Get the global configuration manager instance

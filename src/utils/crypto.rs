@@ -4,10 +4,16 @@ use rand::Rng;
 use ring::{digest, pbkdf2};
 use std::{num::NonZeroU32, sync::Arc};
 
+use crate::app::config::ConfigManager;
+
 const CREDENTIAL_LEN: usize = digest::SHA256_OUTPUT_LEN;
 static PBKDF2_ALG: pbkdf2::Algorithm = pbkdf2::PBKDF2_HMAC_SHA256;
 static PBKDF2_ITERATIONS: Lazy<Arc<NonZeroU32>> = Lazy::new(|| {
-    Arc::new(NonZeroU32::new(100_000).unwrap()) // TODO: handle iterations with user config
+    let config = ConfigManager::instance()
+        .expect("Configuration not initialized")
+        .read();
+
+    Arc::new(NonZeroU32::new(config.auth.pbkdf2_iterations).unwrap())
 });
 
 pub fn hash_password(secret: &str, salt: &str) -> String {

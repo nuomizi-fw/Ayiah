@@ -1,4 +1,4 @@
-use std::{env, net::SocketAddr, path::PathBuf, sync::Arc};
+use std::{env, path::PathBuf, sync::Arc};
 
 use axum::{Extension, Router, http::HeaderName, middleware};
 use sea_orm_migration::MigratorTrait;
@@ -62,21 +62,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         ))
         .layer(CorsLayer::permissive());
 
-    // Get configured host and port
-    let host = {
-        let config = config_manager.read();
-        config.server.host.clone()
-    };
-
-    let port = {
-        let config = config_manager.read();
-        config.server.port
-    };
-
     // Parse host:port string into SocketAddr
-    let address = format!("{}:{}", host, port)
-        .parse::<SocketAddr>()
-        .expect("Invalid server address configuration");
+    let address = config_manager.socket_addr()?;
 
     info!("Server listening on {}", &address);
 
