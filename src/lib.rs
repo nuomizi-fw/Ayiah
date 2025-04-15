@@ -9,6 +9,7 @@ use axum::{
 use error::AyiahError;
 use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 pub mod app;
 pub mod db;
@@ -23,7 +24,7 @@ pub mod utils;
 
 pub type ApiResult<T> = std::result::Result<ApiResponse<T>, AyiahError>;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 pub struct ApiResponse<T> {
     pub code: u16,
     pub message: String,
@@ -35,9 +36,7 @@ where
     T: Serialize,
 {
     fn into_response(self) -> Response {
-        let body = Json(self);
-
-        (StatusCode::OK, body).into_response()
+        (StatusCode::from_u16(self.code).unwrap(), Json(self.data)).into_response()
     }
 }
 

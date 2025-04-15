@@ -47,7 +47,7 @@ pub fn mount() -> Router {
     tag = "Auth",
     request_body = CreateUserPayload,
     responses(
-        (status = 201, description = "User registered successfully", body = ()),
+        (status = 200, description = "User registered successfully", body = ()),
         (status = 400, description = "Invalid input data", body = ()),
         (status = 409, description = "Username or email already exists", body = ()),
         (status = 500, description = "Internal server error", body = ()),
@@ -102,7 +102,7 @@ pub async fn register(
     Mutation::create_user(db, new_user).await?;
 
     Ok(ApiResponse {
-        code: StatusCode::CREATED.as_u16(),
+        code: StatusCode::OK.into(),
         message: "User registered successfully".to_string(),
         data: None,
     })
@@ -116,7 +116,7 @@ pub async fn register(
     tag = "Auth",
     request_body = LoginPayload,
     responses(
-        (status = 200, description = "Login successful", body = AuthBody),
+        (status = 200, description = "Login successful", body = ApiResponse<AuthBody>),
         (status = 400, description = "Invalid input data", body = ()),
         (status = 401, description = "Invalid username or password", body = ()),
         (status = 500, description = "Internal server error", body = ()),
@@ -158,7 +158,7 @@ pub async fn login(
     let token = claims.encode_jwt().map_err(AyiahError::AuthError)?;
 
     Ok(ApiResponse {
-        code: StatusCode::OK.as_u16(),
+        code: StatusCode::OK.into(),
         message: "Login successful".to_string(),
         data: Some(AuthBody::new(token)),
     })
@@ -171,7 +171,7 @@ pub async fn login(
     path = "/api/users/me",
     tag = "User",
     responses(
-        (status = 200, description = "User profile retrieved", body = user::Model),
+        (status = 200, description = "User profile retrieved", body = ApiResponse<user::Model>),
         (status = 401, description = "Not authenticated", body = ()),
         (status = 404, description = "User not found", body = ()),
     ),
@@ -193,7 +193,7 @@ pub async fn me(Extension(ctx): Extension<Ctx>, claims: JwtClaims) -> ApiResult<
         .ok_or_else(|| AyiahError::ApiError(ApiError::NotFound("User not found".to_string())))?;
 
     Ok(ApiResponse {
-        code: StatusCode::OK.as_u16(),
+        code: StatusCode::OK.into(),
         message: "User profile retrieved".to_string(),
         data: Some(user),
     })
