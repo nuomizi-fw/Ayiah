@@ -15,6 +15,7 @@ pub mod app;
 pub mod db;
 pub mod entity;
 pub mod error;
+pub mod integration;
 pub mod middleware;
 pub mod migration;
 pub mod models;
