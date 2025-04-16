@@ -8,15 +8,15 @@ use tower_http::{
     cors::CorsLayer,
     propagate_header::PropagateHeaderLayer,
     request_id::{MakeRequestUuid, SetRequestIdLayer},
+    services::{ServeDir, ServeFile},
 };
 use tracing::info;
 
 use ayiah::{
     Context,
     app::config::ConfigManager,
-    db,
+    db::{self, migration::Migrator},
     middleware::logger as middleware_logger,
-    migration::Migrator,
     routes,
     utils::{graceful_shutdown::shutdown_signal, logger},
 };
@@ -38,9 +38,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Migrate database
     Migrator::up(&conn, None).await.unwrap();
+
     // Create application router
     let app = Router::new()
         .merge(routes::mount())
+        .fallback_service(
+            ServeDir::new("/dist").not_found_service(ServeFile::new("/dist/index.html")),
+        )
         .layer(Extension(Arc::new(Context {
             db: conn,
             config: config_manager.clone(),

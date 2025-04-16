@@ -13,7 +13,7 @@ use validator::Validate;
 
 use crate::{
     ApiResponse, ApiResult, Ctx,
-    entity::user,
+    db::entity::user,
     error::{ApiError, AyiahError},
     middleware::auth::JwtClaims,
     models::user::{AuthBody, CreateUserPayload},

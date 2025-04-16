@@ -30,7 +30,7 @@ export default function IndexPage() {
 						className={buttonStyles({
 							color: "primary",
 							radius: "full",
-							variant: "shadow-sm",
+							variant: "shadow",
 						})}
 						href={siteConfig.links.docs}
 					>

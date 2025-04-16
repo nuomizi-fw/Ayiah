@@ -6,7 +6,7 @@ use utoipa::{
 use utoipa_scalar::{Scalar, Servable};
 
 use crate::{
-    entity::user,
+    db::entity::user,
     models::user::{AuthBody, AuthPayload, CreateUserPayload, UpdateUserPayload},
 };
 

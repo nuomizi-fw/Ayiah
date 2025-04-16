@@ -2,7 +2,7 @@ use sea_orm::prelude::*;
 use uuid::Uuid;
 
 use crate::{
-    entity::{
+    db::entity::{
         prelude::*,
         user::{self},
     },

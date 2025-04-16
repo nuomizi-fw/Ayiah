@@ -1,7 +1,7 @@
 use sea_orm::prelude::*;
 
 use crate::{
-    entity::{
+    db::entity::{
         prelude::*,
         user::{self},
     },
