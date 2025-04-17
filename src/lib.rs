@@ -1,3 +1,5 @@
+#![forbid(unsafe_code)]
+
 use std::sync::Arc;
 
 use app::config::ConfigManager;
@@ -18,7 +20,6 @@ pub mod integration;
 pub mod middleware;
 pub mod models;
 pub mod routes;
-pub mod service;
 pub mod utils;
 
 pub type ApiResult<T> = std::result::Result<ApiResponse<T>, AyiahError>;

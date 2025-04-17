@@ -17,7 +17,7 @@ use crate::{
     error::{ApiError, AyiahError},
     middleware::auth::JwtClaims,
     models::user::{AuthBody, CreateUserPayload},
-    service::{mutation::Mutation, query::Query},
+    routes::service::{mutation::Mutation, query::Query},
     utils::crypto::{generate_salt, hash_password, verify_password},
 };
 
