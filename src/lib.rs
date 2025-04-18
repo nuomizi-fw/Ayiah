@@ -5,7 +5,6 @@ use std::sync::Arc;
 use app::config::ConfigManager;
 use axum::{
     Json,
-    http::StatusCode,
     response::{IntoResponse, Response},
 };
 use error::AyiahError;
@@ -36,7 +35,7 @@ where
     T: Serialize,
 {
     fn into_response(self) -> Response {
-        (StatusCode::from_u16(self.code).unwrap(), Json(self.data)).into_response()
+        Json(self).into_response()
     }
 }
 
