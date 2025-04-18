@@ -1,0 +1,15 @@
+[package]
+name = "ayiah-macros"
+version = "0.1.0"
+edition = "2024"
+description = "Custom derive macros for Ayiah project"
+authors = ["Ns2Kracy <ns2kracy@gmail.com>"]
+license = "MIT"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.82"
+quote = "1.0.35"
+syn = { version = "2.0.51", features = ["full", "extra-traits"] }

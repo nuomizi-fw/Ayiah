@@ -10,8 +10,14 @@ homepage = "https://github.com/Ns2Kracy/Ayiah"
 documentation = "https://github.com/Ns2Kracy/Ayiah"
 repository = "https://github.com/Ns2Kracy/Ayiah"
 
+[workspace]
+resolver = "2"
+members = [".", "crates/*"]
+
 
 [dependencies]
+ayiah-macros = { path = "./crates/ayiah-macros" }
+
 # Error handling and utilities
 anyhow = "1.0.98"
 async-trait = "0.1.88"

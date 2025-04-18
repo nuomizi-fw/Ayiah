@@ -413,6 +413,7 @@ dependencies = [
  "async-trait",
  "axum",
  "axum-extra",
+ "ayiah-macros",
  "bcrypt",
  "bytes",
  "chrono",
@@ -460,6 +461,15 @@ dependencies = [
  "walkdir",
  "webp",
  "zip 2.6.1",
+]
+
+[[package]]
+name = "ayiah-macros"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.100",
 ]
 
 [[package]]
