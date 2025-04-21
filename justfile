@@ -63,6 +63,11 @@ test-server:
     @echo "🧪 Running backend tests..."
     cargo test
 
+# Generate entity
+generate:
+    @echo "Generating entity..."
+    sea-orm-cli generate entity -u sqlite:ayiah.db --model-extra-derives "utoipa::ToSchema" --with-serde both -o ./src/db/entity
+
 # ===== Code quality commands =====
 
 # Check code formatting

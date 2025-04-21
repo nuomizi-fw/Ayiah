@@ -1,6 +1,5 @@
 pub mod entity;
 pub mod migration;
-pub mod schema;
 
 use crate::error::AyiahError;
 

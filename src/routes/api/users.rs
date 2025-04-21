@@ -13,7 +13,7 @@ use validator::Validate;
 
 use crate::{
     ApiResponse, ApiResult, Ctx,
-    db::schema::user,
+    db::entity::user,
     error::{ApiError, AyiahError},
     middleware::auth::JwtClaims,
     models::user::{AuthBody, CreateUserPayload},
@@ -88,14 +88,14 @@ pub async fn register(
     let new_user = user::ActiveModel {
         id: ActiveValue::Set(Uuid::new_v4()),
         username: ActiveValue::Set(payload.username),
-        email: ActiveValue::Set(payload.email),
+        email: ActiveValue::Set(Some(payload.email)),
         hashed_password: ActiveValue::Set(hashed_password),
         salt: ActiveValue::Set(salt),
         display_name: ActiveValue::Set(payload.display_name),
         avatar: ActiveValue::Set(payload.avatar),
         is_admin: ActiveValue::Set(is_first_user), // First user becomes admin
-        created_at: ActiveValue::Set(Utc::now().into()),
-        updated_at: ActiveValue::Set(Utc::now().into()),
+        created_at: ActiveValue::Set(Utc::now().naive_utc()),
+        updated_at: ActiveValue::Set(Utc::now().naive_utc()),
         last_login_at: ActiveValue::Set(None),
     };
 
@@ -148,8 +148,8 @@ pub async fn login(
 
     // Update last login time
     let mut user_active: user::ActiveModel = user.clone().into();
-    user_active.last_login_at = ActiveValue::Set(Some(Utc::now().into()));
-    user_active.updated_at = ActiveValue::Set(Utc::now().into());
+    user_active.last_login_at = ActiveValue::Set(Some(Utc::now().naive_utc()));
+    user_active.updated_at = ActiveValue::Set(Utc::now().naive_utc());
 
     Mutation::update_user(db, user_active).await?;
 

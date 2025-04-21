@@ -5,10 +5,7 @@ use utoipa::{
 };
 use utoipa_scalar::{Scalar, Servable};
 
-use crate::{
-    db::schema::user,
-    models::user::{AuthBody, AuthPayload, CreateUserPayload, UpdateUserPayload},
-};
+use crate::{db::entity::user, models::user::{AuthBody, AuthPayload, CreateUserPayload, UpdateUserPayload}};
 
 pub use super::api::users::*;
 
@@ -28,7 +25,20 @@ impl Modify for SecurityAddon {
 
 #[derive(OpenApi)]
 #[openapi(
-    info(title = "Ayiah API", version = "0.1.0", description = "Ayiah Media Server API"),
+    info(
+        title = "Ayiah API",
+        version = "0.1.0",
+        description = "Ayiah Backend API Documentation",
+        license(
+            name = "MIT",
+            url = "https://opensource.org/licenses/MIT"
+        ),
+        contact(
+            name = "Ns2Kracy",
+            url = "https://github.com/Ns2Kracy",
+            email = "ns2kracy@gmail.com"
+        )
+    ),
     paths(
         // Common operations
         openapi,
