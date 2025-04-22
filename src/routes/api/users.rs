@@ -94,8 +94,8 @@ pub async fn register(
         display_name: ActiveValue::Set(payload.display_name),
         avatar: ActiveValue::Set(payload.avatar),
         is_admin: ActiveValue::Set(is_first_user), // First user becomes admin
-        created_at: ActiveValue::Set(Utc::now().naive_utc()),
-        updated_at: ActiveValue::Set(Utc::now().naive_utc()),
+        created_at: ActiveValue::Set(Utc::now().timestamp()),
+        updated_at: ActiveValue::Set(Utc::now().timestamp()),
         last_login_at: ActiveValue::Set(None),
     };
 
@@ -148,8 +148,8 @@ pub async fn login(
 
     // Update last login time
     let mut user_active: user::ActiveModel = user.clone().into();
-    user_active.last_login_at = ActiveValue::Set(Some(Utc::now().naive_utc()));
-    user_active.updated_at = ActiveValue::Set(Utc::now().naive_utc());
+    user_active.last_login_at = ActiveValue::Set(Some(Utc::now().timestamp()));
+    user_active.updated_at = ActiveValue::Set(Utc::now().timestamp());
 
     Mutation::update_user(db, user_active).await?;
 

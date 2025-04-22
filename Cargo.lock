@@ -435,7 +435,7 @@ dependencies = [
  "once_cell",
  "parking_lot",
  "pdf",
- "rand 0.9.0",
+ "rand 0.9.1",
  "rayon",
  "regex",
  "reqwest",
@@ -3330,13 +3330,12 @@ dependencies = [
 
 [[package]]
 name = "rand"
-version = "0.9.0"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3779b94aeb87e8bd4e834cee3650289ee9e0d5677f976ecdb6d219e5f4f6cd94"
+checksum = "9fbfd9d094a40bf3ae768db9361049ace4c0e04a4fd6b359518bd7b73a73dd97"
 dependencies = [
  "rand_chacha 0.9.0",
  "rand_core 0.9.3",
- "zerocopy 0.8.23",
 ]
 
 [[package]]
@@ -5220,7 +5219,7 @@ dependencies = [
  "http",
  "httparse",
  "log",
- "rand 0.9.0",
+ "rand 0.9.1",
  "sha1",
  "thiserror 2.0.12",
  "utf-8",
@@ -5331,8 +5330,7 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 [[package]]
 name = "utoipa"
 version = "5.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "435c6f69ef38c9017b4b4eea965dfb91e71e53d869e896db40d1cf2441dd75c0"
+source = "git+https://github.com/Ns2Kracy/utoipa.git#6a2e5519504a6453c63d9597da4cad1901c36be3"
 dependencies = [
  "indexmap",
  "serde",
@@ -5343,8 +5341,7 @@ dependencies = [
 [[package]]
 name = "utoipa-gen"
 version = "5.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a77d306bc75294fd52f3e99b13ece67c02c1a2789190a6f31d32f736624326f7"
+source = "git+https://github.com/Ns2Kracy/utoipa.git#6a2e5519504a6453c63d9597da4cad1901c36be3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5356,8 +5353,7 @@ dependencies = [
 [[package]]
 name = "utoipa-scalar"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59559e1509172f6b26c1cdbc7247c4ddd1ac6560fe94b584f81ee489b141f719"
+source = "git+https://github.com/Ns2Kracy/utoipa.git#6a2e5519504a6453c63d9597da4cad1901c36be3"
 dependencies = [
  "axum",
  "serde",

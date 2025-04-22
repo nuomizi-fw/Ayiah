@@ -118,25 +118,39 @@ tracing-subscriber = { version = "0.3.19", features = [
 ] }
 
 # API documentation
-utoipa = { version = "5.3.1", features = [
+utoipa = { git = "https://github.com/Ns2Kracy/utoipa.git", features = [
     "axum_extras",
     "openapi_extensions",
     "chrono",
     "time",
     "uuid",
 ] }
-utoipa-scalar = { version = "0.3.0", features = ["axum"] }
+utoipa-scalar = { git = "https://github.com/Ns2Kracy/utoipa.git", features = [
+    "axum",
+] }
 
 # Miscellaneous
 num_cpus = "1.16.0"
-rand = "0.9.0"
+rand = "0.9.1"
 regex = "1.11.1"
 
 [profile.dev]
 opt-level = 1
-
+debug = true
+rpath = false
+lto = false
+debug-assertions = true
+codegen-units = 256
+incremental = true
+panic = "unwind"
 
 [profile.release]
-lto = true
-strip = true
+opt-level = 3
+debug = false
+rpath = false
+lto = "fat"
 codegen-units = 1
+debug-assertions = false
+incremental = false
+panic = "abort"
+strip = true

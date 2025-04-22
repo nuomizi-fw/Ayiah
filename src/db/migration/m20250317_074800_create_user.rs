@@ -29,9 +29,9 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(false),
                     )
-                    .col(ColumnDef::new(User::CreatedAt).date_time().not_null())
-                    .col(ColumnDef::new(User::UpdatedAt).date_time().not_null())
-                    .col(ColumnDef::new(User::LastLoginAt).date_time())
+                    .col(ColumnDef::new(User::CreatedAt).big_integer().not_null())
+                    .col(ColumnDef::new(User::UpdatedAt).big_integer().not_null())
+                    .col(ColumnDef::new(User::LastLoginAt).big_integer())
                     .to_owned(),
             )
             .await

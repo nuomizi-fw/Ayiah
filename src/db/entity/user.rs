@@ -18,9 +18,9 @@ pub struct Model {
     pub display_name: Option<String>,
     pub avatar: Option<String>,
     pub is_admin: bool,
-    pub created_at: DateTime,
-    pub updated_at: DateTime,
-    pub last_login_at: Option<DateTime>,
+    pub created_at: i64,
+    pub updated_at: i64,
+    pub last_login_at: Option<i64>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
