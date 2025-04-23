@@ -414,6 +414,7 @@ dependencies = [
  "axum",
  "axum-extra",
  "ayiah-macros",
+ "ayiah-migration",
  "bcrypt",
  "bytes",
  "chrono",
@@ -441,7 +442,6 @@ dependencies = [
  "reqwest",
  "ring",
  "sea-orm",
- "sea-orm-migration",
  "serde",
  "serde_json",
  "symphonia",
@@ -470,6 +470,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.100",
+]
+
+[[package]]
+name = "ayiah-migration"
+version = "0.1.0"
+dependencies = [
+ "sea-orm-migration",
+ "tokio",
 ]
 
 [[package]]

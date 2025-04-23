@@ -17,6 +17,8 @@ members = [".", "crates/*"]
 
 [dependencies]
 ayiah-macros = { path = "./crates/ayiah-macros" }
+ayiah-migration = { path = "./crates/ayiah-migration" }
+
 
 # Error handling and utilities
 anyhow = "1.0.98"
@@ -49,12 +51,6 @@ sea-orm = { version = "1.1.10", features = [
     "sqlx-mysql",
     "macros",
     "runtime-tokio-rustls",
-] }
-sea-orm-migration = { version = "1.1.10", features = [
-    "runtime-tokio-rustls",
-    "sqlx-sqlite",
-    "sqlx-postgres",
-    "sqlx-mysql",
 ] }
 
 # Serialization and configuration

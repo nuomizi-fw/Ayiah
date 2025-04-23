@@ -64,9 +64,9 @@ test-server:
     cargo test
 
 # Generate entity
-generate:
+gen-entity:
     @echo "Generating entity..."
-    sea-orm-cli generate entity -u sqlite:ayiah.db --model-extra-derives "utoipa::ToSchema" --with-serde both -o ./src/db/entity
+    sea-orm-cli generate entity -u sqlite:ayiah.db --model-extra-derives "utoipa::ToSchema" --with-serde both -o ./src/models/entities
 
 # ===== Code quality commands =====
 

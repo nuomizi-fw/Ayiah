@@ -1,7 +1,7 @@
 use std::{env, path::PathBuf, sync::Arc};
 
 use axum::{Extension, Router, http::HeaderName, middleware};
-use sea_orm_migration::MigratorTrait;
+use migration::{Migrator, MigratorTrait};
 use tokio::net::TcpListener;
 use tower_http::{
     compression::CompressionLayer,
@@ -15,7 +15,7 @@ use tracing::info;
 use ayiah::{
     Context,
     app::config::ConfigManager,
-    db::{self, migration::Migrator},
+    db::{self},
     middleware::logger as middleware_logger,
     routes,
     utils::{graceful_shutdown::shutdown_signal, logger},

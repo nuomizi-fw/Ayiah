@@ -5,7 +5,10 @@ use utoipa::{
 };
 use utoipa_scalar::{Scalar, Servable};
 
-use crate::{db::entity::user, models::user::{AuthBody, AuthPayload, CreateUserPayload, UpdateUserPayload}};
+use crate::{
+    models::entities::user,
+    models::user::{AuthBody, AuthPayload, CreateUserPayload, UpdateUserPayload},
+};
 
 pub use super::api::users::*;
 

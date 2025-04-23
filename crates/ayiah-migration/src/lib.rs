@@ -1,4 +1,4 @@
-use sea_orm_migration::{MigrationTrait, MigratorTrait};
+pub use sea_orm_migration::prelude::*;
 
 mod m20250317_074800_create_user;
 

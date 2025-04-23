@@ -1,11 +1,11 @@
 use sea_orm::prelude::*;
 
 use crate::{
-    db::entity::{
+    error::AyiahError,
+    models::entities::{
         prelude::*,
         user::{self},
     },
-    error::AyiahError,
 };
 
 /// Handles mutations (write operations) for user data

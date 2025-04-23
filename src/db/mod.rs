@@ -1,6 +1,3 @@
-pub mod entity;
-pub mod migration;
-
 use crate::error::AyiahError;
 
 use crate::app::config::ConfigManager;

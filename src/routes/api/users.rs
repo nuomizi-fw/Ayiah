@@ -13,9 +13,9 @@ use validator::Validate;
 
 use crate::{
     ApiResponse, ApiResult, Ctx,
-    db::entity::user,
     error::{ApiError, AyiahError},
     middleware::auth::JwtClaims,
+    models::entities::user,
     models::user::{AuthBody, CreateUserPayload},
     routes::service::{mutation::Mutation, query::Query},
     utils::crypto::{generate_salt, hash_password, verify_password},

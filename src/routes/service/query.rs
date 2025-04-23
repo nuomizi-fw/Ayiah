@@ -2,11 +2,11 @@ use sea_orm::prelude::*;
 use uuid::Uuid;
 
 use crate::{
-    db::entity::{
+    error::AyiahError,
+    models::entities::{
         prelude::*,
         user::{self},
     },
-    error::AyiahError,
 };
 
 /// Handles queries (read operations) for user data
