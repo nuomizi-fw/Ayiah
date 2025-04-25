@@ -481,6 +481,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ayiah-provider"
+version = "0.1.0"
+
+[[package]]
+name = "ayiah-scraper"
+version = "0.1.0"
+
+[[package]]
 name = "backtrace"
 version = "0.3.74"
 source = "registry+https://github.com/rust-lang/crates.io-index"
