@@ -2,13 +2,13 @@
 name = "ayiah"
 version = "0.1.0"
 edition = "2024"
-description = "A simple and elegant reading app."
+description = "A simple and elegant media server."
 authors = ["Ns2Kracy <ns2kracy@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/Ns2Kracy/Ayiah"
-documentation = "https://github.com/Ns2Kracy/Ayiah"
-repository = "https://github.com/Ns2Kracy/Ayiah"
+homepage = "https://github.com/nuomizi-fw/Ayiah"
+documentation = "https://github.com/nuomizi-fw/Ayiah"
+repository = "https://github.com/nuomizi-fw/Ayiah"
 
 [workspace]
 resolver = "2"
