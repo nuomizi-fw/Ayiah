@@ -1,4 +1,4 @@
-mod provider;
+pub mod provider;
 
 use provider::MetadataProvider;
 

@@ -1,7 +1,9 @@
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 
 use crate::provider::{MediaMetadata, MetadataProvider};
 
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct TmdbProvider {
     pub api_key: String,
 }

@@ -415,6 +415,7 @@ dependencies = [
  "axum-extra",
  "ayiah-macros",
  "ayiah-migration",
+ "ayiah-scraper",
  "bcrypt",
  "bytes",
  "chrono",

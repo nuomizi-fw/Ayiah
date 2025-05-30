@@ -5,6 +5,9 @@ use std::{
     sync::Arc,
 };
 
+use ayiah_scraper::provider::{
+    anilist::AnilistProvider, bangumi::BangumiProvider, tmdb::TmdbProvider, tvdb::TvdbProvider,
+};
 use config::{Config as ConfigBuilder, Environment, File as ConfigFile};
 use once_cell::sync::OnceCell;
 use parking_lot::RwLock;
@@ -41,6 +44,24 @@ pub struct AppConfig {
 
     #[serde(default)]
     pub logging: LoggingConfig,
+
+    #[serde(default)]
+    pub providers: ProvidersConfig,
+}
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+pub struct ProvidersConfig {
+    #[serde(default)]
+    pub tmdb: TmdbProvider,
+
+    #[serde(default)]
+    pub tvdb: TvdbProvider,
+
+    #[serde(default)]
+    pub anilist: AnilistProvider,
+
+    #[serde(default)]
+    pub bangumi: BangumiProvider,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
