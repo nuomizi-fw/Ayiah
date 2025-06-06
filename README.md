@@ -1,5 +1,11 @@
 # Ayiah
 
+<html>
+    <body>
+        <img src="assets/logo.svg" alt="Ayiah Logo" width="768" height="256">
+    </body>
+</html>
+
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/nuomizi-fw/Ayiah)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
