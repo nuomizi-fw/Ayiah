@@ -2,7 +2,7 @@
 
 <html>
     <body>
-        <img src="assets/logo.svg" alt="Ayiah Logo" width="1280" height="512">
+        <img src="assets/logo.svg" alt="Ayiah Logo" width="1280" height="384">
     </body>
 </html>
 
