@@ -5,16 +5,23 @@ use std::{
     sync::Arc,
 };
 
-use ayiah_scraper::provider::{
-    anilist::AnilistProvider, bangumi::BangumiProvider, tmdb::TmdbProvider, tvdb::TvdbProvider,
-};
 use config::{Config as ConfigBuilder, Environment, File as ConfigFile};
 use once_cell::sync::OnceCell;
 use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
 use tracing::info;
+use utoipa::ToSchema;
 
-use crate::error::ConfigError;
+use crate::{
+    error::ConfigError,
+    scraper::{
+        OrganizeMethod, Provider,
+        provider::{
+            anilist::AnilistProvider, bangumi::BangumiProvider, tmdb::TmdbProvider,
+            tvdb::TvdbProvider,
+        },
+    },
+};
 
 // Global configuration manager instance
 static CONFIG_MANAGER: OnceCell<ConfigManager> = OnceCell::new();
@@ -47,6 +54,9 @@ pub struct AppConfig {
 
     #[serde(default)]
     pub providers: ProvidersConfig,
+
+    #[serde(default)]
+    pub scrape: ScrapeConfig,
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
@@ -62,6 +72,27 @@ pub struct ProvidersConfig {
 
     #[serde(default)]
     pub bangumi: BangumiProvider,
+}
+
+/// Scraper configuration
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct ScrapeConfig {
+    /// Default provider
+    pub default_provider: Provider,
+    /// Fallback provider list
+    pub fallback_providers: Vec<Provider>,
+    /// Default organize method
+    pub default_organize_method: OrganizeMethod,
+}
+
+impl Default for ScrapeConfig {
+    fn default() -> Self {
+        Self {
+            default_provider: Provider::Tmdb,
+            fallback_providers: vec![],
+            default_organize_method: OrganizeMethod::HardLink,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

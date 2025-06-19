@@ -186,3 +186,9 @@ impl ConfigError {
         }
     }
 }
+
+#[derive(thiserror::Error, Debug)]
+pub enum ScrapeError {
+    #[error("File not found: {0}")]
+    FileNotFound(String),
+}

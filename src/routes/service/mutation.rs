@@ -2,7 +2,7 @@ use sea_orm::prelude::*;
 
 use crate::{
     error::AyiahError,
-    models::entities::{
+    entities::{
         prelude::*,
         user::{self},
     },

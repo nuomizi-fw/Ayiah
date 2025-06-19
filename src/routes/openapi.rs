@@ -5,12 +5,9 @@ use utoipa::{
 };
 use utoipa_scalar::{Scalar, Servable};
 
-use crate::{
-    models::entities::user,
-    models::user::{AuthBody, AuthPayload, CreateUserPayload, UpdateUserPayload},
-};
+use crate::{app::config::ScrapeConfig, entities::user};
 
-pub use super::api::users::*;
+use super::api::{provider::*, scrape::*, users::*};
 
 struct SecurityAddon;
 
@@ -50,6 +47,16 @@ impl Modify for SecurityAddon {
         register,
         login,
         me,
+
+        // Scrape operations
+        scrape,
+        manual_match,
+        get_scrape_config,
+        update_scrape_config,
+
+        // Provider operations
+        get_supported_providers,
+        test_provider_connection,
     ),
     components(
         schemas(
@@ -62,6 +69,18 @@ impl Modify for SecurityAddon {
             user::Model,
             CreateUserPayload,
             UpdateUserPayload,
+
+            // Scrape schemas
+            ScrapePayload,
+            ManualMatchPayload,
+            ScrapeConfig,
+
+
+            // Provider schemas
+            ProviderConnectionTestPayload,
+            ProvidersResponse,
+            ProviderInfo,
+
         )
     ),
     tags(

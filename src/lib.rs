@@ -14,10 +14,11 @@ use utoipa::ToSchema;
 
 pub mod app;
 pub mod db;
+pub mod entities;
 pub mod error;
 pub mod middleware;
-pub mod models;
 pub mod routes;
+pub mod scraper;
 pub mod utils;
 
 pub type ApiResult<T> = std::result::Result<ApiResponse<T>, AyiahError>;

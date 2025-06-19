@@ -6,13 +6,10 @@ use tracing_subscriber::{
     prelude::*,
 };
 
-use crate::app::config::ConfigManager;
+use crate::app::config::LoggingConfig;
 
 /// Initialize the logging system based on configuration
-pub fn init(config_manager: &'static ConfigManager) -> Result<(), String> {
-    let config = config_manager.read();
-    let log_config = &config.logging;
-
+pub fn init(log_config: &LoggingConfig) -> Result<(), String> {
     // Initialize the base subscriber with filter
     let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
         EnvFilter::new(format!(

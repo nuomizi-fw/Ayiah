@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::{
     error::AyiahError,
-    models::entities::{
+    entities::{
         prelude::*,
         user::{self},
     },

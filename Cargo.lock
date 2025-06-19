@@ -413,9 +413,7 @@ dependencies = [
  "async-trait",
  "axum",
  "axum-extra",
- "ayiah-macros",
  "ayiah-migration",
- "ayiah-scraper",
  "bcrypt",
  "bytes",
  "chrono",
@@ -465,29 +463,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "ayiah-macros"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.100",
-]
-
-[[package]]
 name = "ayiah-migration"
 version = "0.1.0"
 dependencies = [
  "sea-orm-migration",
- "tokio",
-]
-
-[[package]]
-name = "ayiah-scraper"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "serde",
- "serde_json",
  "tokio",
 ]
 

@@ -1,13 +1,14 @@
 use std::error::Error;
 
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 pub mod anilist;
 pub mod bangumi;
 pub mod tmdb;
 pub mod tvdb;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, ToSchema)]
 pub struct VideoMetadata {
     pub title: Option<String>,
     pub original_title: Option<String>,
@@ -50,7 +51,7 @@ pub struct VideoMetadata {
     pub air_date: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, ToSchema)]
 pub struct BookMetadata {
     pub title: Option<String>,
     pub original_title: Option<String>,
@@ -80,7 +81,7 @@ pub struct BookMetadata {
     pub country: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, ToSchema)]
 pub struct MusicMetadata {
     pub title: Option<String>,
     pub artists: Option<Vec<String>>,
@@ -115,7 +116,7 @@ pub struct MusicMetadata {
     pub remastered: Option<bool>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, ToSchema)]
 pub struct ComicMetadata {
     pub title: Option<String>,
     pub original_title: Option<String>,
@@ -157,7 +158,7 @@ pub struct ComicMetadata {
     pub file_format: Option<String>, // cbz, cbr, pdf, etc.
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, ToSchema)]
 #[serde(tag = "type")]
 pub enum MediaMetadata {
     Video(VideoMetadata),

@@ -16,10 +16,7 @@ members = [".", "crates/*"]
 
 
 [dependencies]
-ayiah-macros = { path = "./crates/ayiah-macros" }
 ayiah-migration = { path = "./crates/ayiah-migration" }
-ayiah-scraper = { path = "./crates/ayiah-scraper" }
-
 
 # Error handling and utilities
 anyhow = "1.0.98"
