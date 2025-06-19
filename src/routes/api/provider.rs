@@ -58,7 +58,10 @@ pub fn mount() -> Router {
         Router::new() // Get supported providers list
             .route("/providers", get(get_supported_providers))
             // Test provider connection
-            .route("/providers/:provider/test", post(test_provider_connection)),
+            .route(
+                "/providers/{:provider}/test",
+                post(test_provider_connection),
+            ),
     )
 }
 
