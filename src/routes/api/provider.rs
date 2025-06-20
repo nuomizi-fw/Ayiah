@@ -14,7 +14,7 @@ use crate::{
     ApiResponse, ApiResult, Ctx,
     error::{ApiError, AyiahError},
     middleware::auth::JwtClaims,
-    scraper::{MediaType, Provider},
+    scraper::MediaType,
 };
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]
@@ -38,12 +38,8 @@ pub struct ProvidersResponse {
 /// Provider information
 #[derive(Debug, Serialize, ToSchema)]
 pub struct ProviderInfo {
-    /// Provider identifier
-    pub id: Provider,
     /// Display name
     pub name: String,
-    /// Description
-    pub description: String,
     /// Supported media types
     pub supported_media_types: Vec<MediaType>,
     /// Whether API key is required
@@ -56,12 +52,9 @@ pub fn mount() -> Router {
     Router::new().nest(
         "/provider",
         Router::new() // Get supported providers list
-            .route("/providers", get(get_supported_providers))
+            .route("/", get(get_supported_providers))
             // Test provider connection
-            .route(
-                "/providers/{:provider}/test",
-                post(test_provider_connection),
-            ),
+            .route("/{provider}/test", post(test_provider_connection)),
     )
 }
 
@@ -69,8 +62,8 @@ pub fn mount() -> Router {
 #[utoipa::path(
     get,
     operation_id = "get_supported_providers",
-    path = "/api/scrape/providers",
-    tag = "Scraper",
+    path = "/api/provider",
+    tag = "Provider",
     responses(
         (status = 200, description = "Providers list retrieved", body = ApiResponse<ProvidersResponse>),
         (status = 500, description = "Internal server error", body = ()),
@@ -98,8 +91,8 @@ pub async fn get_supported_providers(
 #[utoipa::path(
     post,
     operation_id = "test_provider_connection",
-    path = "/api/scrape/providers/{provider}/test",
-    tag = "Scraper",
+    path = "/api/provider/{provider}/test",
+    tag = "Provider",
     request_body = ProviderConnectionTestPayload,
     responses(
         (status = 200, description = "Provider test completed", body = ApiResponse<HashMap<String, String>>),

@@ -30,6 +30,9 @@ pub enum AyiahError {
 
     #[error("{0}")]
     JwtError(#[from] jsonwebtoken::errors::Error),
+
+    #[error("{0}")]
+    ScrapeError(#[from] ScrapeError),
 }
 
 impl AyiahError {
@@ -65,6 +68,13 @@ impl AyiahError {
                 (
                     StatusCode::UNAUTHORIZED,
                     "Authentication token error".to_string(),
+                )
+            }
+            Self::ScrapeError(err) => {
+                tracing::error!("Scrape error: {}", err);
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    format!("Scrape operation failed: {}", err),
                 )
             }
         }
@@ -191,4 +201,52 @@ impl ConfigError {
 pub enum ScrapeError {
     #[error("File not found: {0}")]
     FileNotFound(String),
+
+    #[error("IO error: {0}")]
+    IoError(#[from] std::io::Error),
+
+    #[error("File type not supported: {0}")]
+    UnsupportedFileType(String),
+
+    #[error("Metadata fetch failed: {0}")]
+    MetadataFetchError(String),
+
+    #[error("File organization failed: {0}")]
+    OrganizationError(String),
+
+    #[error("Permission denied: {0}")]
+    PermissionDenied(String),
+
+    #[error("Invalid path: {0}")]
+    InvalidPath(String),
+
+    #[error("Symlink creation failed: {0}")]
+    SymlinkError(String),
+
+    #[error("Hard link creation failed: {0}")]
+    HardLinkError(String),
+
+    #[error("Copy operation failed: {0}")]
+    CopyError(String),
+
+    #[error("Move operation failed: {0}")]
+    MoveError(String),
+
+    #[error("Path already exists: {0}")]
+    PathExists(String),
+
+    #[error("Directory creation failed: {0}")]
+    DirectoryCreationError(String),
+
+    #[error("File scan failed: {0}")]
+    ScanError(String),
+
+    #[error("Task join error: {0}")]
+    TaskJoinError(#[from] tokio::task::JoinError),
+
+    #[error("Channel send error")]
+    ChannelSendError,
+
+    #[error("Channel receive error")]
+    ChannelReceiveError,
 }

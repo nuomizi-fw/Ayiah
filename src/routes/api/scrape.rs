@@ -172,123 +172,17 @@ pub fn mount() -> Router {
 pub async fn scrape(
     Extension(_ctx): Extension<Ctx>,
     _claims: JwtClaims,
-    Json(request): Json<ScrapePayload>,
+    Json(payload): Json<ScrapePayload>,
 ) -> ApiResult<ScrapeResponse> {
-    // Validate request
-    request.validate().map_err(|e| {
+    // Validate request parameters
+    payload.validate().map_err(|e| {
         AyiahError::ApiError(ApiError::BadRequest(format!("Validation error: {}", e)))
     })?;
-
-    // Handle different scraping logic based on target type
-    let start_time = std::time::Instant::now();
-
-    let (target_info, results) = match request.target.target_type.as_str() {
-        "file" => {
-            let file_path = request.target.file_path.ok_or_else(|| {
-                AyiahError::ApiError(ApiError::BadRequest(
-                    "file_path is required for file type".to_string(),
-                ))
-            })?;
-
-            // TODO: Implement single file scraping logic
-            let result = ScrapeResult {
-                file_path: file_path.clone(),
-                media_type: request.media_type.unwrap_or(MediaType::Video),
-                provider: request.provider.unwrap_or(Provider::Tmdb),
-                success: true,
-                metadata: None,
-                organized_path: None,
-                duration_ms: 0,
-            };
-
-            let target_info = ScrapeTargetInfo {
-                target_type: "file".to_string(),
-                file_path: Some(file_path),
-                processed_files: None,
-                directory_path: None,
-                discovered_files: None,
-                directory_processed_files: None,
-            };
-
-            (target_info, vec![result])
-        }
-        "batch" => {
-            let file_paths = request.target.file_paths.ok_or_else(|| {
-                AyiahError::ApiError(ApiError::BadRequest(
-                    "file_paths is required for batch type".to_string(),
-                ))
-            })?;
-
-            // TODO: Implement batch file scraping logic
-            let media_type = request.media_type.unwrap_or(MediaType::Video);
-            let provider = request.provider.unwrap_or(Provider::Tmdb);
-            let results: Vec<ScrapeResult> = file_paths
-                .into_iter()
-                .map(|file_path| ScrapeResult {
-                    file_path,
-                    media_type: media_type.clone(),
-                    provider: provider.clone(),
-                    success: true,
-                    metadata: None,
-                    organized_path: None,
-                    duration_ms: 0,
-                })
-                .collect();
-
-            let target_info = ScrapeTargetInfo {
-                target_type: "batch".to_string(),
-                file_path: None,
-                processed_files: Some(results.len() as u32),
-                directory_path: None,
-                discovered_files: None,
-                directory_processed_files: None,
-            };
-
-            (target_info, results)
-        }
-        "directory" => {
-            let directory_path = request.target.directory_path.ok_or_else(|| {
-                AyiahError::ApiError(ApiError::BadRequest(
-                    "directory_path is required for directory type".to_string(),
-                ))
-            })?;
-
-            // TODO: Implement directory scanning and scraping logic
-            let target_info = ScrapeTargetInfo {
-                target_type: "directory".to_string(),
-                file_path: None,
-                processed_files: None,
-                directory_path: Some(directory_path),
-                discovered_files: Some(0),
-                directory_processed_files: Some(0),
-            };
-
-            (target_info, vec![])
-        }
-        _ => {
-            return Err(AyiahError::ApiError(ApiError::BadRequest(
-                "Invalid target type. Must be 'file', 'batch', or 'directory'".to_string(),
-            )));
-        }
-    };
-
-    let duration_ms = start_time.elapsed().as_millis() as u64;
-    let success_count = results.iter().filter(|r| r.success).count() as u32;
-    let failed_count = results.len() as u32 - success_count;
-
-    let response = ScrapeResponse {
-        target_info,
-        total_files: results.len() as u32,
-        success_count,
-        failed_count,
-        duration_ms,
-        results,
-    };
 
     Ok(ApiResponse {
         code: StatusCode::OK.into(),
         message: "Scrape completed successfully".to_string(),
-        data: Some(response),
+        data: None,
     })
 }
 
@@ -313,28 +207,17 @@ pub async fn scrape(
 pub async fn manual_match(
     Extension(_ctx): Extension<Ctx>,
     _claims: JwtClaims,
-    Json(request): Json<ManualMatchPayload>,
+    Json(payload): Json<ManualMatchPayload>,
 ) -> ApiResult<ScrapeResult> {
     // Validate input
-    request.validate().map_err(|e| {
+    payload.validate().map_err(|e| {
         AyiahError::ApiError(ApiError::BadRequest(format!("Validation error: {}", e)))
     })?;
-
-    // TODO: Implement manual matching logic
-    let result = ScrapeResult {
-        file_path: request.file_path.clone(),
-        media_type: request.media_type,
-        provider: request.provider,
-        success: true,
-        metadata: None,
-        organized_path: None,
-        duration_ms: 0,
-    };
 
     Ok(ApiResponse {
         code: StatusCode::OK.into(),
         message: "Manual match completed".to_string(),
-        data: Some(result),
+        data: None,
     })
 }
 
