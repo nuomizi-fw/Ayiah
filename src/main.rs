@@ -1,7 +1,6 @@
 use std::{env, path::PathBuf, sync::Arc};
 
-use axum::{Extension, Router, http::HeaderName, middleware};
-use migration::{Migrator, MigratorTrait};
+use axum::{Router, http::HeaderName, middleware};
 use tokio::net::TcpListener;
 use tower_http::{
     compression::CompressionLayer,
@@ -15,7 +14,7 @@ use tracing::info;
 use ayiah::{
     Context,
     app::config::ConfigManager,
-    db::{self},
+    // db::{self},
     middleware::logger as middleware_logger,
     routes,
     utils::{graceful_shutdown::shutdown_signal, logger},
@@ -34,11 +33,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     logger::init(&config_manager.read().logging)
         .map_err(|e| format!("Logging initialization error: {}", e))?;
 
-    // Connect to database
-    let conn = db::init().await?;
+    // let conn = db::init().await?;
 
-    // Migrate database
-    Migrator::up(&conn, None).await.unwrap();
+    // Create shared application state
+    let ctx = Arc::new(Context {
+        // db: conn,
+        config: config_manager.clone(),
+    });
 
     // Create application router
     let app = Router::new()
@@ -46,10 +47,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .fallback_service(
             ServeDir::new("/dist").not_found_service(ServeFile::new("/dist/index.html")),
         )
-        .layer(Extension(Arc::new(Context {
-            db: conn,
-            config: config_manager.clone(),
-        })))
+        .with_state(ctx)
         .layer(middleware::from_fn(middleware_logger))
         .layer(CompressionLayer::new())
         .layer(PropagateHeaderLayer::new(HeaderName::from_static(

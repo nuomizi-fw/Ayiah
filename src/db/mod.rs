@@ -1,9 +1,11 @@
-use crate::error::AyiahError;
-
 use crate::app::config::ConfigManager;
-use sea_orm::{Database, DatabaseConnection};
+use crate::error::AyiahError;
+use sqlx::{Pool, Sqlite, SqlitePool};
+use std::time::Duration;
 
-pub async fn init() -> Result<DatabaseConnection, AyiahError> {
+pub type Database = Pool<Sqlite>;
+
+pub async fn init() -> Result<Database, AyiahError> {
     let db_config = {
         let config = ConfigManager::instance()
             .expect("Configuration not initialized")
@@ -11,42 +13,29 @@ pub async fn init() -> Result<DatabaseConnection, AyiahError> {
         config.database.clone()
     };
 
-    let conn_str = match db_config.db_type.as_str() {
-        "sqlite" => {
-            let db_path = if db_config.db_file.is_empty() {
-                "ayiah.db"
-            } else {
-                &db_config.db_file
-            };
-            format!("sqlite:{}?mode=rwc", db_path)
-        }
-        "postgres" => {
-            format!(
-                "postgres://{}:{}@{}:{}/{}",
-                db_config.user, db_config.password, db_config.host, db_config.port, db_config.name
-            )
-        }
-        "mysql" => {
-            format!(
-                "mysql://{}:{}@{}:{}/{}",
-                db_config.user, db_config.password, db_config.host, db_config.port, db_config.name
-            )
-        }
-        db_type => {
-            return Err(AyiahError::DbError(sea_orm::DbErr::Custom(format!(
-                "Unsupported database type: {}",
-                db_type
-            ))));
-        }
+    // 只支持 SQLite
+    let db_path = if db_config.db_file.is_empty() {
+        "ayiah.db"
+    } else {
+        &db_config.db_file
     };
 
-    let mut opts = sea_orm::ConnectOptions::new(conn_str);
+    let pool = SqlitePool::connect_with(
+        sqlx::sqlite::SqliteConnectOptions::new()
+            .filename(db_path)
+            .create_if_missing(true)
+            .journal_mode(sqlx::sqlite::SqliteJournalMode::Wal)
+            .synchronous(sqlx::sqlite::SqliteSynchronous::Normal)
+            .busy_timeout(Duration::from_secs(30)),
+    )
+    .await
+    .map_err(|e| AyiahError::DatabaseError(e.to_string()))?;
 
-    // Common options for all database types
-    opts.max_connections(20)
-        .min_connections(5)
-        .connect_timeout(std::time::Duration::from_secs(8))
-        .sqlx_logging(true);
+    // 运行迁移
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .map_err(|e| AyiahError::DatabaseError(format!("Migration failed: {}", e)))?;
 
-    Database::connect(opts).await.map_err(AyiahError::DbError)
+    Ok(pool)
 }

@@ -1,11 +1,9 @@
 use axum::Router;
 
-pub mod api;
-pub mod openapi;
-pub mod service;
+use crate::Ctx;
 
-pub fn mount() -> Router {
-    Router::new()
-        .merge(openapi::mount())
-        .nest("/api", api::mount())
+pub mod api;
+
+pub fn mount() -> Router<Ctx> {
+    Router::new().nest("/api", api::mount())
 }

@@ -1,23 +1,21 @@
 use std::collections::HashMap;
 
 use axum::{
-    Extension, Json, Router,
+    Json, Router,
     extract::Path,
     routing::{get, post},
 };
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
 use validator::Validate;
 
 use crate::{
     ApiResponse, ApiResult, Ctx,
     error::{ApiError, AyiahError},
-    middleware::auth::JwtClaims,
     scraper::MediaType,
 };
 
-#[derive(Debug, Deserialize, Validate, ToSchema)]
+#[derive(Debug, Deserialize, Validate)]
 pub struct ProviderConnectionTestPayload {
     /// Timeout duration (seconds)
     #[validate(range(
@@ -29,14 +27,14 @@ pub struct ProviderConnectionTestPayload {
 }
 
 /// Providers response
-#[derive(Debug, Serialize, ToSchema)]
+#[derive(Debug, Serialize)]
 pub struct ProvidersResponse {
     /// List of available providers
     pub providers: Vec<ProviderInfo>,
 }
 
 /// Provider information
-#[derive(Debug, Serialize, ToSchema)]
+#[derive(Debug, Serialize)]
 pub struct ProviderInfo {
     /// Display name
     pub name: String,
@@ -48,7 +46,7 @@ pub struct ProviderInfo {
     pub available: bool,
 }
 
-pub fn mount() -> Router {
+pub fn mount() -> Router<Ctx> {
     Router::new().nest(
         "/provider",
         Router::new() // Get supported providers list
@@ -58,25 +56,7 @@ pub fn mount() -> Router {
     )
 }
 
-/// Get supported providers list
-#[utoipa::path(
-    get,
-    operation_id = "get_supported_providers",
-    path = "/api/provider",
-    tag = "Provider",
-    responses(
-        (status = 200, description = "Providers list retrieved", body = ApiResponse<ProvidersResponse>),
-        (status = 500, description = "Internal server error", body = ()),
-    ),
-    params(),
-    security(
-        ("bearer_auth" = [])
-    )
-)]
-pub async fn get_supported_providers(
-    Extension(_ctx): Extension<Ctx>,
-    _claims: JwtClaims,
-) -> ApiResult<ProvidersResponse> {
+pub async fn get_supported_providers() -> ApiResult<ProvidersResponse> {
     // TODO: Detect availability of each provider
     let response = ProvidersResponse { providers: vec![] };
 
@@ -87,28 +67,7 @@ pub async fn get_supported_providers(
     })
 }
 
-/// Test provider connection
-#[utoipa::path(
-    post,
-    operation_id = "test_provider_connection",
-    path = "/api/provider/{provider}/test",
-    tag = "Provider",
-    request_body = ProviderConnectionTestPayload,
-    responses(
-        (status = 200, description = "Provider test completed", body = ApiResponse<HashMap<String, String>>),
-        (status = 400, description = "Invalid provider or request", body = ()),
-        (status = 500, description = "Internal server error", body = ()),
-    ),
-    params(
-        ("provider" = String, Path, description = "Provider name to test")
-    ),
-    security(
-        ("bearer_auth" = [])
-    )
-)]
 pub async fn test_provider_connection(
-    Extension(_ctx): Extension<Ctx>,
-    _claims: JwtClaims,
     Path(provider): Path<String>,
     Json(request): Json<ProviderConnectionTestPayload>,
 ) -> ApiResult<HashMap<String, String>> {

@@ -1,30 +1,28 @@
 use axum::{
     Router,
-    extract::{Extension, Json, Query},
+    extract::{Json, Query, State},
     http::StatusCode,
     routing::{get, post},
 };
 use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
 use validator::Validate;
 
 use crate::{
     ApiResponse, ApiResult, Ctx,
     app::config::ScrapeConfig,
     error::{ApiError, AyiahError},
-    middleware::auth::JwtClaims,
     scraper::{MediaType, OrganizeMethod, Provider, provider},
 };
 
 /// Get configuration query parameters
-#[derive(Debug, Deserialize, ToSchema)]
+#[derive(Debug, Deserialize)]
 pub struct GetConfigQuery {
     /// Media type filter
     pub media_type: Option<MediaType>,
 }
 
 /// Unified scrape request
-#[derive(Debug, Deserialize, Validate, ToSchema)]
+#[derive(Debug, Deserialize, Validate)]
 pub struct ScrapePayload {
     /// Scrape target type
     pub target: ScrapeTarget,
@@ -46,7 +44,7 @@ pub struct ScrapePayload {
 }
 
 /// Scrape target type
-#[derive(Debug, Deserialize, Validate, ToSchema)]
+#[derive(Debug, Deserialize, Validate)]
 pub struct ScrapeTarget {
     /// Target type: file, batch, directory
     #[serde(rename = "type")]
@@ -67,7 +65,7 @@ pub struct ScrapeTarget {
 }
 
 /// Unified scrape response
-#[derive(Debug, Serialize, ToSchema)]
+#[derive(Debug, Serialize)]
 pub struct ScrapeResponse {
     /// Scrape target information
     pub target_info: ScrapeTargetInfo,
@@ -84,7 +82,7 @@ pub struct ScrapeResponse {
 }
 
 /// Scrape target information
-#[derive(Debug, Serialize, ToSchema)]
+#[derive(Debug, Serialize)]
 pub struct ScrapeTargetInfo {
     /// Target type: file, batch, directory
     #[serde(rename = "type")]
@@ -102,7 +100,7 @@ pub struct ScrapeTargetInfo {
 }
 
 /// Manual match request
-#[derive(Debug, Deserialize, Validate, ToSchema)]
+#[derive(Debug, Deserialize, Validate)]
 pub struct ManualMatchPayload {
     /// File path
     #[validate(length(min = 1, message = "File path cannot be empty"))]
@@ -121,7 +119,7 @@ pub struct ManualMatchPayload {
 }
 
 /// Scrape result
-#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScrapeResult {
     /// File path
     pub file_path: String,
@@ -139,7 +137,7 @@ pub struct ScrapeResult {
     pub duration_ms: u64,
 }
 
-pub fn mount() -> Router {
+pub fn mount() -> Router<Ctx> {
     Router::new().nest(
         "/scrape",
         Router::new()
@@ -151,27 +149,8 @@ pub fn mount() -> Router {
     )
 }
 
-/// Unified scrape endpoint
-#[utoipa::path(
-    post,
-    operation_id = "scrape",
-    path = "/api/scrape",
-    tag = "Scraper",
-    request_body = ScrapePayload,
-    responses(
-        (status = 200, description = "Scrape completed successfully", body = ApiResponse<ScrapeResponse>),
-        (status = 400, description = "Invalid input data", body = ()),
-        (status = 404, description = "File or directory not found", body = ()),
-        (status = 500, description = "Internal server error", body = ()),
-    ),
-    params(),
-    security(
-        ("bearer_auth" = [])
-    )
-)]
 pub async fn scrape(
-    Extension(_ctx): Extension<Ctx>,
-    _claims: JwtClaims,
+    State(_ctx): State<Ctx>,
     Json(payload): Json<ScrapePayload>,
 ) -> ApiResult<ScrapeResponse> {
     // Validate request parameters
@@ -186,29 +165,7 @@ pub async fn scrape(
     })
 }
 
-/// Manual match media information
-#[utoipa::path(
-    post,
-    operation_id = "manual_match",
-    path = "/api/scrape/manual-match",
-    tag = "Scraper",
-    request_body = ManualMatchPayload,
-    responses(
-        (status = 200, description = "Manual match completed", body = ApiResponse<ScrapeResult>),
-        (status = 400, description = "Invalid input data", body = ()),
-        (status = 404, description = "File or media not found", body = ()),
-        (status = 500, description = "Internal server error", body = ()),
-    ),
-    params(),
-    security(
-        ("bearer_auth" = [])
-    )
-)]
-pub async fn manual_match(
-    Extension(_ctx): Extension<Ctx>,
-    _claims: JwtClaims,
-    Json(payload): Json<ManualMatchPayload>,
-) -> ApiResult<ScrapeResult> {
+pub async fn manual_match(Json(payload): Json<ManualMatchPayload>) -> ApiResult<ScrapeResult> {
     // Validate input
     payload.validate().map_err(|e| {
         AyiahError::ApiError(ApiError::BadRequest(format!("Validation error: {}", e)))
@@ -221,26 +178,8 @@ pub async fn manual_match(
     })
 }
 
-/// Get scraping configuration
-#[utoipa::path(
-    get,
-    operation_id = "get_scrape_config",
-    path = "/api/scrape/config",
-    tag = "Scraper",
-    responses(
-        (status = 200, description = "Configuration retrieved", body = ApiResponse<ScrapeConfig>),
-        (status = 500, description = "Internal server error", body = ()),
-    ),
-    params(
-        ("media_type" = Option<MediaType>, Query, description = "Filter by media type")
-    ),
-    security(
-        ("bearer_auth" = [])
-    )
-)]
 pub async fn get_scrape_config(
-    Extension(ctx): Extension<Ctx>,
-    _claims: JwtClaims,
+    State(ctx): State<Ctx>,
     Query(_query): Query<GetConfigQuery>,
 ) -> ApiResult<ScrapeConfig> {
     let config = ctx.config.read().scrape.clone();
@@ -252,26 +191,8 @@ pub async fn get_scrape_config(
     })
 }
 
-/// Update scraping configuration
-#[utoipa::path(
-    post,
-    operation_id = "update_scrape_config",
-    path = "/api/scrape/config",
-    tag = "Scraper",
-    request_body = ScrapeConfig,
-    responses(
-        (status = 200, description = "Configuration updated", body = ()),
-        (status = 400, description = "Invalid configuration", body = ()),
-        (status = 500, description = "Internal server error", body = ()),
-    ),
-    params(),
-    security(
-        ("bearer_auth" = [])
-    )
-)]
 pub async fn update_scrape_config(
-    Extension(ctx): Extension<Ctx>,
-    _claims: JwtClaims,
+    State(ctx): State<Ctx>,
     Json(config): Json<ScrapeConfig>,
 ) -> ApiResult<()> {
     let mut app_config = ctx.config.write();

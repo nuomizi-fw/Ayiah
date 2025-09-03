@@ -14,12 +14,11 @@ use tokio::{
     sync::{Semaphore, mpsc},
     task::JoinSet,
 };
-use utoipa::ToSchema;
 use walkdir::WalkDir;
 
 use crate::error::ScrapeError;
 
-#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum OrganizeMethod {
     SoftLink,
     HardLink,
@@ -34,7 +33,7 @@ impl Default for OrganizeMethod {
 }
 
 /// Media type enumeration
-#[derive(Debug, Clone, Serialize, Deserialize, ToSchema, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum MediaType {
     /// Video file
     Video,
@@ -47,7 +46,7 @@ pub enum MediaType {
 }
 
 /// Scraper provider enumeration
-#[derive(Debug, Clone, Serialize, Deserialize, ToSchema, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Provider {
     /// TMDB (The Movie Database)
     Tmdb,
@@ -69,7 +68,7 @@ pub struct FileInfo {
 }
 
 /// Scraping progress information
-#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScrapeProgress {
     pub total_files: usize,
     pub processed_files: usize,

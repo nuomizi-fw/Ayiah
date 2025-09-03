@@ -8,12 +8,10 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use error::AyiahError;
-use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
 
 pub mod app;
-pub mod db;
+// pub mod db;
 pub mod entities;
 pub mod error;
 pub mod middleware;
@@ -22,8 +20,9 @@ pub mod scraper;
 pub mod utils;
 
 pub type ApiResult<T> = std::result::Result<ApiResponse<T>, AyiahError>;
+pub type Ctx = Arc<Context>;
 
-#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ApiResponse<T> {
     pub code: u16,
     pub message: String,
@@ -39,14 +38,12 @@ where
     }
 }
 
-/// AppState holds all shared application resources
+/// Context holds all shared application resources
 #[derive(Clone)]
 pub struct Context {
     /// Shared configuration manager
     pub config: ConfigManager,
 
-    /// Database connection
-    pub db: DatabaseConnection,
+    // /// Database connection
+    // pub db: db::Database,
 }
-
-pub type Ctx = Arc<Context>;

@@ -61,3 +61,5 @@ ayiah.toml
 
 # Ayiah database
 ayiah.db
+ayiah.db-shm
+ayiah.db-wal

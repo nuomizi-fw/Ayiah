@@ -10,7 +10,6 @@ use once_cell::sync::OnceCell;
 use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
 use tracing::info;
-use utoipa::ToSchema;
 
 use crate::{
     error::ConfigError,
@@ -75,7 +74,7 @@ pub struct ProvidersConfig {
 }
 
 /// Scraper configuration
-#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScrapeConfig {
     /// Default provider
     pub default_provider: Provider,
