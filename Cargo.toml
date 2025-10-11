@@ -3,7 +3,6 @@ name = "ayiah"
 version = "0.1.0"
 edition = "2024"
 description = "A simple and elegant media server."
-authors = ["Ns2Kracy <ns2kracy@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/nuomizi-fw/Ayiah"
@@ -12,98 +11,97 @@ repository = "https://github.com/nuomizi-fw/Ayiah"
 
 [dependencies]
 # Error handling and utilities
-anyhow = "1.0.98"
-async-trait = "0.1.88"
-thiserror = "2.0.12"
+anyhow = "1.0.100"
+async-trait = "0.1.89"
+thiserror = "2.0.17"
 
 # Web framework and HTTP
-axum = { version = "0.8.3", features = ["multipart", "ws"] }
-axum-extra = { version = "0.10.1", features = [
+axum = { version = "0.8.6", features = ["multipart", "ws"] }
+axum-extra = { version = "0.10.3", features = [
     "cookie",
     "multipart",
     "typed-header",
     "typed-routing",
 ] }
-hyper = { version = "1.6.0", features = ["full"] }
+hyper = { version = "1.7.0", features = ["full"] }
 tower = { version = "0.5.2", features = ["full"] }
-tower-http = { version = "0.6.2", features = ["full"] }
+tower-http = { version = "0.6.6", features = ["full"] }
 
 # Authentication and security
 validator = { version = "0.20.0", features = ["derive"] }
 
 # Database
-# sqlx = { version = "0.8", features = [
-#     "runtime-tokio-rustls",
-#     "sqlite",
-#     "chrono",
-#     "uuid",
-#     "migrate",
-#     "macros",
-# ] }
+sqlx = { version = "0.8", features = [
+    "runtime-tokio-rustls",
+    "sqlite",
+    "chrono",
+    "uuid",
+    "migrate",
+    "macros",
+] }
 
 # Serialization and configuration
-config = "0.15.11"
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
-toml = "0.8.20"
+config = "0.15.18"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+toml = "0.9.8"
 
 # Asynchronous programming
-tokio = { version = "1.44.2", features = ["full"] }
+tokio = { version = "1.47.1", features = ["full"] }
 futures = "0.3.31"
 futures-core = "0.3.31"
 futures-util = "0.3.31"
 
 # File and media processing
-# bytes = "1.10.1"
-# epub = "2.1.2"
-# image = "0.25.6"
-# infer = "0.19.0"
-# pdf = "0.9.0"
-# symphonia = { version = "0.5.4", features = [
-#     "all",
-#     "mpa",
-#     "opt-simd",
-#     "opt-simd-avx",
-#     "opt-simd-neon",
-#     "opt-simd-sse",
-#     "symphonia-bundle-mp3",
-#     "symphonia-format-riff",
-# ] }
-# webp = "0.3.0"
-# zip = "2.6.1"
+bytes = "1.10.1"
+epub = "2.1.4"
+image = "0.25.8"
+infer = "0.19.0"
+symphonia = { version = "0.5.4", features = [
+    "all",
+    "mpa",
+    "opt-simd",
+    "opt-simd-avx",
+    "opt-simd-neon",
+    "opt-simd-sse",
+    "symphonia-bundle-mp3",
+    "symphonia-format-riff",
+] }
+webp = "0.3.1"
+zip = "6.0.0"
 
 # File system and I/O
 dirs = "6.0.0"
-notify = "8.0.0"
-tempfile = "3.19.1"
+notify = "8.2.0"
+tempfile = "3.23.0"
 walkdir = "2.5.0"
 
 # Concurrency and caching
 dashmap = "6.1.0"
 once_cell = "1.21.3"
-parking_lot = "0.12.3"
-rayon = "1.10.0"
+parking_lot = "0.12.5"
+rayon = "1.11.0"
 
 # Time and UUID
-chrono = "0.4.40"
-uuid = { version = "1.16.0", features = ["v4"] }
+chrono = "0.4.42"
+uuid = { version = "1.18.1", features = ["v4"] }
 
 # Networking and HTTP client
-reqwest = { version = "0.12.15", features = ["json"] }
+reqwest = { version = "0.12.23", features = ["json"] }
 
 # Logging and tracing
 tracing = "0.1.41"
 tracing-appender = "0.2.3"
-tracing-subscriber = { version = "0.3.19", features = [
+tracing-subscriber = { version = "0.3.20", features = [
     "env-filter",
     "json",
     "chrono",
 ] }
 
 # Miscellaneous
-num_cpus = "1.16.0"
-rand = "0.9.1"
-regex = "1.11.1"
+num_cpus = "1.17.0"
+rand = "0.9.2"
+regex = "1.12.1"
 
 [profile.dev]
 opt-level = 1

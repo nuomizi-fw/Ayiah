@@ -14,7 +14,7 @@ use tracing::info;
 use ayiah::{
     Context,
     app::config::ConfigManager,
-    // db::{self},
+    db,
     middleware::logger as middleware_logger,
     routes,
     utils::{graceful_shutdown::shutdown_signal, logger},
@@ -33,11 +33,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     logger::init(&config_manager.read().logging)
         .map_err(|e| format!("Logging initialization error: {}", e))?;
 
-    // let conn = db::init().await?;
+    let conn = db::init().await?;
 
     // Create shared application state
     let ctx = Arc::new(Context {
-        // db: conn,
+        db: conn,
         config: config_manager.clone(),
     });
 

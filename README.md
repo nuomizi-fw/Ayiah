@@ -1,5 +1,7 @@
 # Ayiah
 
+Celestial (Ayiah), We're astral (Ayiou)
+
 <html>
     <body>
         <img src="assets/logo.svg" alt="Ayiah Logo" width="1280" height="384">
@@ -8,32 +10,61 @@
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/nuomizi-fw/Ayiah)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Project Status: WIP](https://img.shields.io/badge/status-work--in--progress-orange)](https://github.com/nuomizi-fw/Ayiah)
 
-Celestial (Ayiah), We're astral (Ayiou)
+## Core Features
 
-## 🚀 Features
+- **Unified Library:** A single, beautiful interface for all your media. No more switching between apps for movies, TV shows, comics, and books.
+- **Full Automation:** Subscribe to the media you want, and Ayiah will take care of the rest. It automatically searches for new releases, sends them to your download client, and seamlessly imports them into your library.
+- **High-Performance Backend:** Built with Rust and the Axum framework for a lightweight, fast, and secure foundation that can run efficiently even on low-powered hardware.
+- **Modern, Snappy Frontend:** A beautiful and responsive user interface built with SolidStart, designed for a best-in-class user experience.
+- **Built-in Readers:** Watch your videos, read your comics, and enjoy your ebooks directly in the browser with integrated, purpose-built readers.
+- **Containerized & Easy to Deploy:** The entire application is orchestrated with Docker, allowing for a simple, one-command setup.
 
-- 🎬 **Multi-Media Support**: Stream and manage videos, music, novels, and comics in one platform.
-- 📡 **RSS Subscriptions**: Automatically track and update your favorite TV shows, anime, novels, and comics.
-- 🌐 **Network Sources**: Access and stream media directly from online sources and network locations.
-- ⬇️ **External Downloader Integration**: Compatible with popular downloaders for automated media acquisition.
-- 🔍 **Media Scraping**: Automatically fetch metadata and artwork for a polished library experience.
-- 🏠 **Self-Hosted**: Full control over your data with easy deployment on your own server.
-- 🖱️ **User-Friendly Interface**: Intuitive design for effortless navigation and media access.
-- 📱 **Cross-Platform**: Accessible on web browsers, with planned support for mobile apps.
+## Tech Stack
 
-## 🛠 Tech Stack
+- **Backend:** [Rust](https://www.rust-lang.org/) with [Axum](https://github.com/tokio-rs/axum) & [Tokio](https://tokio.rs/)
+- **Frontend:** [SolidStart](https://start.solidjs.com/) (TypeScript)
+- **Database:** [DuckDB](https://www.duckdb.org/)
+- **Containerization:** [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
 
-**Backend**: Rust, Axum
+## Project Philosophy
 
-**Frontend**: React, Vite, Tailwind CSS, HeroUI
+The goal of Ayiah is to create the ultimate, integrated home media server. We prioritize:
 
-**Database**: SQLite(With SeaORM)
+1. **Elegance & Simplicity:** A clean, intuitive interface that makes managing a large library a pleasure.
+2. **Performance & Efficiency:** A low-resource backend that is fast, reliable, and can run 24/7 without worry.
+3. **Integration:** A seamless, "all-in-one" experience that removes the need to configure and maintain a complex stack of separate applications.
 
-**Deployment**: Pre-compiled, Docker
+## Getting Started
 
-**CI/CD**: GitHub Actions
+> **Note:** This project is currently in the early stages of development. These instructions are the target for a first release.
 
----
+Ayiah is designed to be run with Docker. Once the initial version is released, you will be able to get it running with these simple steps:
 
-Happy media hosting with Ayiah! 🎥🎵📚
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/nuomizi-fw/Ayiah.git
+    cd Ayiah
+    ```
+
+2. Create a `docker-compose.yml` file (an example will be provided). You will need to configure your media library paths.
+3. Start the application:
+
+    ```bash
+    docker-compose up -d
+    ```
+
+4. Open your web browser and navigate to `http://localhost:PORT` to access the Ayiah dashboard.
+
+## Contributing
+
+Contributions are welcome and encouraged! If you're interested in helping build the future of home media servers, please check out the `TODO.md` file for the project roadmap.
+
+Feel free to open an issue to discuss a new feature or bug, or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

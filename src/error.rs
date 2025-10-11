@@ -16,11 +16,11 @@ pub enum AyiahError {
     #[error("{0}")]
     ConfigError(#[from] ConfigError),
 
-    // #[error("{0}")]
-    // DatabaseError(String),
+    #[error("{0}")]
+    DatabaseError(String),
 
-    // #[error("{0}")]
-    // SqlxError(#[from] sqlx::Error),
+    #[error("{0}")]
+    SqlxError(#[from] sqlx::Error),
 
     #[error("{0}")]
     SerdeJsonError(#[from] serde_json::Error),
@@ -38,20 +38,20 @@ impl AyiahError {
             Self::ApiError(err) => err.code(),
             Self::AuthError(err) => err.code(),
             Self::ConfigError(err) => err.code(),
-            // Self::DatabaseError(err) => {
-            //     tracing::error!("Database error: {}", err);
-            //     (
-            //         StatusCode::INTERNAL_SERVER_ERROR,
-            //         "An error occurred while accessing the database".to_string(),
-            //     )
-            // }
-            // Self::SqlxError(err) => {
-            //     tracing::error!("SQLx error: {}", err);
-            //     (
-            //         StatusCode::INTERNAL_SERVER_ERROR,
-            //         "A database error occurred".to_string(),
-            //     )
-            // }
+            Self::DatabaseError(err) => {
+                tracing::error!("Database error: {}", err);
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "An error occurred while accessing the database".to_string(),
+                )
+            }
+            Self::SqlxError(err) => {
+                tracing::error!("SQLx error: {}", err);
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "A database error occurred".to_string(),
+                )
+            }
             Self::SerdeJsonError(err) => {
                 tracing::error!("Serde JSON error: {}", err);
                 (StatusCode::BAD_REQUEST, "Invalid JSON format".to_string())

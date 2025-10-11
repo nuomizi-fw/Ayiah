@@ -25,8 +25,21 @@ use crate::{
 // Global configuration manager instance
 static CONFIG_MANAGER: OnceCell<ConfigManager> = OnceCell::new();
 
-// Default configuration path
-const DEFAULT_CONFIG_PATH: &str = "config/ayiah.toml";
+// Default configuration path following XDG Base Directory specification
+// or AYIAH_DATA_DIR environment variable for Docker deployment
+fn default_config_path() -> PathBuf {
+    if let Ok(data_dir) = std::env::var("AYIAH_DATA_DIR") {
+        // Docker mode: use specified data directory
+        PathBuf::from(data_dir).join("config.toml")
+    } else {
+        // Native mode: follow XDG Base Directory specification
+        dirs::config_dir()
+            .unwrap_or_else(|| PathBuf::from("."))
+            .join("ayiah")
+            .join("config.toml")
+    }
+}
+
 const ENVIRONMENT_PREFIX: &str = "AYIAH";
 
 /// Configuration manager
@@ -41,9 +54,6 @@ pub struct ConfigManager {
 pub struct AppConfig {
     #[serde(default)]
     pub server: ServerConfig,
-
-    #[serde(default)]
-    pub database: DatabaseConfig,
 
     #[serde(default)]
     pub auth: AuthConfig,
@@ -113,48 +123,6 @@ impl Default for ServerConfig {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DatabaseConfig {
-    #[serde(default)]
-    pub db_type: String,
-
-    #[serde(default)]
-    pub host: String,
-
-    #[serde(default)]
-    pub port: u16,
-
-    #[serde(default)]
-    pub user: String,
-
-    #[serde(default)]
-    pub password: String,
-
-    #[serde(default)]
-    pub name: String,
-
-    #[serde(default)]
-    pub db_file: String,
-
-    #[serde(default)]
-    pub table_prefix: String,
-}
-
-impl Default for DatabaseConfig {
-    fn default() -> Self {
-        Self {
-            db_type: "sqlite".to_string(),
-            host: "".to_string(),
-            port: 0,
-            user: "".to_string(),
-            password: "".to_string(),
-            name: "".to_string(),
-            db_file: "ayiah.db".to_string(),
-            table_prefix: "".to_string(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AuthConfig {
     #[serde(default)]
     pub jwt_secret: String,
@@ -203,7 +171,7 @@ impl ConfigManager {
     pub fn new<P: AsRef<Path>>(config_path: Option<P>) -> Result<Self, ConfigError> {
         let config_path = config_path
             .map(|p| p.as_ref().to_path_buf())
-            .unwrap_or_else(|| PathBuf::from(DEFAULT_CONFIG_PATH));
+            .unwrap_or_else(default_config_path);
 
         let config = Self::load_config(&config_path)?;
         Ok(Self {
@@ -216,7 +184,7 @@ impl ConfigManager {
     pub fn init<P: AsRef<Path>>(config_path: Option<P>) -> Result<&'static Self, ConfigError> {
         let config_path = config_path
             .map(|p| p.as_ref().to_path_buf())
-            .unwrap_or_else(|| PathBuf::from(DEFAULT_CONFIG_PATH));
+            .unwrap_or_else(default_config_path);
 
         info!("Initializing configuration from {:?}", config_path);
 
@@ -281,15 +249,15 @@ impl ConfigManager {
                 "Configuration file not found, creating default configuration at {:?}",
                 config_path
             );
-            if let Some(parent) = config_path.parent() {
-                if !parent.exists() {
-                    fs::create_dir_all(parent).map_err(|e| {
-                        ConfigError::WriteError(format!(
-                            "Failed to create configuration directory: {}",
-                            e
-                        ))
-                    })?;
-                }
+            if let Some(parent) = config_path.parent()
+                && !parent.exists()
+            {
+                fs::create_dir_all(parent).map_err(|e| {
+                    ConfigError::WriteError(format!(
+                        "Failed to create configuration directory: {}",
+                        e
+                    ))
+                })?;
             }
 
             let default_config = AppConfig::default();

@@ -1,11 +1,20 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from 'vite';
+import solidPlugin from 'vite-plugin-solid';
+import devtools from 'solid-devtools/vite';
+import tailwindcss from '@tailwindcss/vite'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  build: {
-    outDir: "../dist",
+  plugins: [devtools(), solidPlugin(), tailwindcss(),],
+  server: {
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:7590',
+        changeOrigin: true,
+      },
+    },
   },
-  plugins: [react(), tsconfigPaths()],
+  build: {
+    target: 'esnext',
+  },
 });

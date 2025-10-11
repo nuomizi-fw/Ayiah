@@ -1,21 +1,42 @@
-import { Route, Routes } from "react-router-dom";
+import type { Component } from "solid-js";
+import { createSignal, onMount } from "solid-js";
+import { getHealth, type HealthResponse } from "./api/health";
 
-import IndexPage from "@/pages/index";
-import DocsPage from "@/pages/docs";
-import PricingPage from "@/pages/pricing";
-import BlogPage from "@/pages/blog";
-import AboutPage from "@/pages/about";
+const App: Component = () => {
+	const [health, setHealth] = createSignal<HealthResponse | null>(null);
+	const [loading, setLoading] = createSignal(true);
+	const [error, setError] = createSignal<string | null>(null);
 
-function App() {
+	onMount(async () => {
+		try {
+			const response = await getHealth().send();
+			setHealth(response.data ?? null);
+		} catch (err) {
+			setError(
+				err instanceof Error ? err.message : "Failed to fetch health status",
+			);
+		} finally {
+			setLoading(false);
+		}
+	});
+
 	return (
-		<Routes>
-			<Route element={<IndexPage />} path="/" />
-			<Route element={<DocsPage />} path="/docs" />
-			<Route element={<PricingPage />} path="/pricing" />
-			<Route element={<BlogPage />} path="/blog" />
-			<Route element={<AboutPage />} path="/about" />
-		</Routes>
+		<div class="p-8">
+			<h1 class="text-3xl font-bold mb-4">Ayiah Media Server</h1>
+
+			<div class="mb-4">
+				<h2 class="text-xl font-semibold mb-2">API Health Check</h2>
+				{loading() && <p>Loading...</p>}
+				{error() && <p class="text-red-500">Error: {error()}</p>}
+				{health() && (
+					<div class="bg-green-100 p-4 rounded">
+						<p>Status: {health()!.status}</p>
+						<p>Database: {health()!.database}</p>
+					</div>
+				)}
+			</div>
+		</div>
 	);
-}
+};
 
 export default App;

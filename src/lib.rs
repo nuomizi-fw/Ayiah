@@ -11,7 +11,7 @@ use error::AyiahError;
 use serde::{Deserialize, Serialize};
 
 pub mod app;
-// pub mod db;
+pub mod db;
 pub mod entities;
 pub mod error;
 pub mod middleware;
@@ -44,6 +44,6 @@ pub struct Context {
     /// Shared configuration manager
     pub config: ConfigManager,
 
-    // /// Database connection
-    // pub db: db::Database,
+    /// Database connection
+    pub db: db::Database,
 }

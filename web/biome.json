@@ -1,110 +1,34 @@
 {
-	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
 	"vcs": {
-		"enabled": true,
+		"enabled": false,
 		"clientKind": "git",
-		"useIgnoreFile": true
+		"useIgnoreFile": false
 	},
 	"files": {
-		"ignoreUnknown": true,
-		"ignore": [
-			".now/*",
-			"**/*.css",
-			"**/.changeset",
-			"**/dist",
-			"esm/*",
-			"public/*",
-			"tests/*",
-			"scripts/*",
-			"**/*.config.js",
-			"**/.DS_Store",
-			"**/node_modules",
-			"**/coverage",
-			"**/.next",
-			"**/build"
-		]
+		"ignoreUnknown": false
 	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab"
 	},
-	"organizeImports": {
-		"enabled": true
-	},
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": false,
-			"a11y": {
-				"noAccessKey": "error",
-				"noAriaUnsupportedElements": "error",
-				"noAutofocus": "error",
-				"noBlankTarget": "error",
-				"noDistractingElements": "error",
-				"noHeaderScope": "error",
-				"noInteractiveElementToNoninteractiveRole": "error",
-				"noLabelWithoutControl": "error",
-				"noNoninteractiveElementToInteractiveRole": "error",
-				"noNoninteractiveTabindex": "error",
-				"noPositiveTabindex": "error",
-				"noRedundantAlt": "error",
-				"noRedundantRoles": "error",
-				"useAltText": "error",
-				"useAnchorContent": "error",
-				"useAriaActivedescendantWithTabindex": "error",
-				"useAriaPropsForRole": "error",
-				"useFocusableInteractive": "warn",
-				"useHeadingContent": "error",
-				"useHtmlLang": "error",
-				"useIframeTitle": "error",
-				"useKeyWithClickEvents": "warn",
-				"useKeyWithMouseEvents": "error",
-				"useMediaCaption": "error",
-				"useValidAnchor": "error",
-				"useValidAriaProps": "error",
-				"useValidAriaRole": "error",
-				"useValidAriaValues": "error"
-			},
-			"correctness": {
-				"noChildrenProp": "error",
-				"noUnusedImports": "warn",
-				"noUnusedVariables": "warn",
-				"useExhaustiveDependencies": "off",
-				"useHookAtTopLevel": "error",
-				"useJsxKeyInIterable": "error"
-			},
-			"security": {
-				"noDangerouslySetInnerHtmlWithChildren": "error"
-			},
-			"style": {
-				"useBlockStatements": "off"
-			},
-			"suspicious": {
-				"noCommentText": "error",
-				"noConsole": "warn",
-				"noDuplicateJsxProps": "error"
-			}
-		},
-		"ignore": [
-			".now/*",
-			"**/*.css",
-			"**/.changeset",
-			"**/dist",
-			"esm/*",
-			"public/*",
-			"tests/*",
-			"scripts/*",
-			"**/*.config.js",
-			"**/.DS_Store",
-			"**/node_modules",
-			"**/coverage",
-			"**/.next",
-			"**/build"
-		]
+			"recommended": true
+		}
 	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"
+		}
+	},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
 		}
 	}
 }

@@ -287,7 +287,7 @@ impl AyiahScraper {
         let semaphore = Arc::new(Semaphore::new(self.max_concurrent_tasks));
         let (progress_tx, mut progress_rx) = mpsc::channel(1000);
 
-        // 创建进度跟踪任务
+        // Create progress tracking task
         let progress_handle = {
             let total = total_files;
             tokio::spawn(async move {
@@ -315,7 +315,7 @@ impl AyiahScraper {
                             progress.elapsed_time = start_time.elapsed().as_secs();
 
                             // Every 10 files print progress
-                            if progress.processed_files % 10 == 0 {
+                            if progress.processed_files.is_multiple_of(10) {
                                 tracing::info!(
                                     "Progress: {}/{} ({:.1}%) - Success: {}, Failed: {}",
                                     progress.processed_files,
