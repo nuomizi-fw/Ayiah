@@ -11,16 +11,7 @@ use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use crate::{
-    error::ConfigError,
-    scraper::{
-        OrganizeMethod, Provider,
-        provider::{
-            anilist::AnilistProvider, bangumi::BangumiProvider, tmdb::TmdbProvider,
-            tvdb::TvdbProvider,
-        },
-    },
-};
+use crate::error::ConfigError;
 
 // Global configuration manager instance
 static CONFIG_MANAGER: OnceCell<ConfigManager> = OnceCell::new();
@@ -60,48 +51,6 @@ pub struct AppConfig {
 
     #[serde(default)]
     pub logging: LoggingConfig,
-
-    #[serde(default)]
-    pub providers: ProvidersConfig,
-
-    #[serde(default)]
-    pub scrape: ScrapeConfig,
-}
-
-#[derive(Default, Debug, Clone, Serialize, Deserialize)]
-pub struct ProvidersConfig {
-    #[serde(default)]
-    pub tmdb: TmdbProvider,
-
-    #[serde(default)]
-    pub tvdb: TvdbProvider,
-
-    #[serde(default)]
-    pub anilist: AnilistProvider,
-
-    #[serde(default)]
-    pub bangumi: BangumiProvider,
-}
-
-/// Scraper configuration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ScrapeConfig {
-    /// Default provider
-    pub default_provider: Provider,
-    /// Fallback provider list
-    pub fallback_providers: Vec<Provider>,
-    /// Default organize method
-    pub default_organize_method: OrganizeMethod,
-}
-
-impl Default for ScrapeConfig {
-    fn default() -> Self {
-        Self {
-            default_provider: Provider::Tmdb,
-            fallback_providers: vec![],
-            default_organize_method: OrganizeMethod::HardLink,
-        }
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
