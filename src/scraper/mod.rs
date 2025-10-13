@@ -5,7 +5,7 @@ mod rate_limiter;
 mod types;
 
 pub use cache::ScraperCache;
-pub use rate_limiter::{RateLimiter, RateLimitConfig};
+pub use rate_limiter::{RateLimitConfig, RateLimiter};
 pub use types::*;
 
 use async_trait::async_trait;
@@ -64,7 +64,12 @@ pub trait MetadataProvider: Send + Sync {
     /// Get episode details
     ///
     /// Retrieve specific episode information for TV shows or anime.
-    async fn get_episode_details(&self, series_id: &str, season: i32, episode: i32) -> Result<EpisodeMetadata>;
+    async fn get_episode_details(
+        &self,
+        series_id: &str,
+        season: i32,
+        episode: i32,
+    ) -> Result<EpisodeMetadata>;
 }
 
 /// Scraper manager for managing multiple providers
@@ -75,6 +80,7 @@ pub struct ScraperManager {
 
 impl ScraperManager {
     /// Create a new scraper manager
+    #[must_use] 
     pub fn new() -> Self {
         Self {
             providers: Vec::new(),
@@ -88,12 +94,14 @@ impl ScraperManager {
     }
 
     /// Get all providers
+    #[must_use] 
     pub fn providers(&self) -> &[Box<dyn MetadataProvider>] {
         &self.providers
     }
 
     /// Get cache
-    pub fn cache(&self) -> &ScraperCache {
+    #[must_use] 
+    pub const fn cache(&self) -> &ScraperCache {
         &self.cache
     }
 
@@ -115,7 +123,9 @@ impl ScraperManager {
         }
 
         if all_results.is_empty() {
-            Err(ScraperError::NotFound(format!("No provider could find: {}", query)))
+            Err(ScraperError::NotFound(format!(
+                "No provider could find: {query}"
+            )))
         } else {
             Ok(all_results)
         }
@@ -127,9 +137,13 @@ impl ScraperManager {
     pub async fn get_details(&self, result: &MediaSearchResult) -> Result<MediaDetails> {
         let provider_name = result.provider();
 
-        let provider = self.providers.iter()
+        let provider = self
+            .providers
+            .iter()
             .find(|p| p.name() == provider_name)
-            .ok_or_else(|| ScraperError::Config(format!("Provider not found: {}", provider_name)))?;
+            .ok_or_else(|| {
+                ScraperError::Config(format!("Provider not found: {provider_name}"))
+            })?;
 
         provider.get_details(result).await
     }
@@ -144,11 +158,17 @@ impl ScraperManager {
         season: i32,
         episode: i32,
     ) -> Result<EpisodeMetadata> {
-        let provider = self.providers.iter()
+        let provider = self
+            .providers
+            .iter()
             .find(|p| p.name() == provider_name)
-            .ok_or_else(|| ScraperError::Config(format!("Provider not found: {}", provider_name)))?;
+            .ok_or_else(|| {
+                ScraperError::Config(format!("Provider not found: {provider_name}"))
+            })?;
 
-        provider.get_episode_details(series_id, season, episode).await
+        provider
+            .get_episode_details(series_id, season, episode)
+            .await
     }
 }
 

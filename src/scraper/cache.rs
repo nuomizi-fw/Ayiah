@@ -11,7 +11,11 @@ pub struct CacheKey {
 }
 
 impl CacheKey {
-    pub fn new(provider: impl Into<String>, media_type: impl Into<String>, query: impl Into<String>) -> Self {
+    pub fn new(
+        provider: impl Into<String>,
+        media_type: impl Into<String>,
+        query: impl Into<String>,
+    ) -> Self {
         Self {
             provider: provider.into(),
             media_type: media_type.into(),
@@ -28,11 +32,13 @@ pub struct ScraperCache {
 
 impl ScraperCache {
     /// Create a new cache instance (default TTL: 1 hour)
+    #[must_use]
     pub fn new() -> Self {
         Self::with_config(3600, 10000)
     }
 
     /// Create a cache instance with custom configuration
+    #[must_use]
     pub fn with_config(ttl_seconds: u64, max_capacity: u64) -> Self {
         let cache = Cache::builder()
             .time_to_live(Duration::from_secs(ttl_seconds))
@@ -43,9 +49,13 @@ impl ScraperCache {
     }
 
     /// Store data to cache
-    pub async fn set<T: Serialize>(&self, key: CacheKey, value: &T) -> Result<(), String> {
+    pub async fn set<T: Serialize + Send + Sync>(
+        &self,
+        key: CacheKey,
+        value: &T,
+    ) -> Result<(), String> {
         let serialized = serde_json::to_vec(value)
-            .map_err(|e| format!("Failed to serialize cache entry: {}", e))?;
+            .map_err(|e| format!("Failed to serialize cache entry: {e}"))?;
 
         self.cache.insert(key, serialized).await;
         Ok(())
@@ -70,11 +80,13 @@ impl ScraperCache {
     }
 
     /// Get cache size (approximate)
+    #[must_use]
     pub fn len(&self) -> u64 {
         self.cache.entry_count()
     }
 
     /// Check if cache is empty
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.cache.entry_count() == 0
     }
@@ -144,8 +156,14 @@ mod tests {
         let key1 = CacheKey::new("tmdb", "movie", "test1");
         let key2 = CacheKey::new("tmdb", "movie", "test2");
 
-        cache.set(key1.clone(), &vec!["movie1".to_string()]).await.unwrap();
-        cache.set(key2.clone(), &vec!["movie2".to_string()]).await.unwrap();
+        cache
+            .set(key1.clone(), &vec!["movie1".to_string()])
+            .await
+            .unwrap();
+        cache
+            .set(key2.clone(), &vec!["movie2".to_string()])
+            .await
+            .unwrap();
 
         // Run pending tasks to ensure writes complete
         cache.run_pending_tasks().await;

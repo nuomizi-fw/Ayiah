@@ -42,7 +42,7 @@ impl TvdbProvider {
         }
 
         // Login to get new token
-        let login_url = format!("{}/login", TVDB_API_URL);
+        let login_url = format!("{TVDB_API_URL}/login");
         let body = serde_json::json!({
             "apikey": self.api_key
         });
@@ -64,7 +64,7 @@ impl TvdbProvider {
         }
 
         let login_response: TvdbLoginResponse = response.json().await.map_err(|e| {
-            ScraperError::Parse(format!("Failed to parse TVDB login response: {}", e))
+            ScraperError::Parse(format!("Failed to parse TVDB login response: {e}"))
         })?;
 
         let token = login_response.data.token;
@@ -76,13 +76,13 @@ impl TvdbProvider {
     /// Execute TVDB API request
     async fn request<T: for<'de> Deserialize<'de>>(&self, endpoint: &str) -> Result<T> {
         let token = self.get_token().await?;
-        let url = format!("{}{}", TVDB_API_URL, endpoint);
+        let url = format!("{TVDB_API_URL}{endpoint}");
 
         let response = self
             .base
             .client
             .get(&url)
-            .header("Authorization", format!("Bearer {}", token))
+            .header("Authorization", format!("Bearer {token}"))
             .send()
             .await
             .map_err(ScraperError::Network)?;
@@ -99,7 +99,7 @@ impl TvdbProvider {
         response
             .json::<T>()
             .await
-            .map_err(|e| ScraperError::Parse(format!("Failed to parse TVDB response: {}", e)))
+            .map_err(|e| ScraperError::Parse(format!("Failed to parse TVDB response: {e}")))
     }
 
     // Private helper methods
@@ -109,7 +109,7 @@ impl TvdbProvider {
         _year: Option<i32>,
     ) -> Result<Vec<TvSearchResult>> {
         let encoded_query = urlencoding::encode(query);
-        let endpoint = format!("/search?query={}&type=series", encoded_query);
+        let endpoint = format!("/search?query={encoded_query}&type=series");
 
         let response: TvdbSearchResponse = self.request(&endpoint).await?;
 
@@ -130,7 +130,7 @@ impl TvdbProvider {
     }
 
     async fn get_tv_details_internal(&self, id: &str) -> Result<TvMetadata> {
-        let endpoint = format!("/series/{}/extended", id);
+        let endpoint = format!("/series/{id}/extended");
         let response: TvdbSeriesResponse = self.request(&endpoint).await?;
         let series = response.data;
 
@@ -143,7 +143,7 @@ impl TvdbProvider {
             overview: series.overview,
             poster_path: series.image,
             backdrop_path: None,
-            vote_average: series.score.map(|s| s as f64),
+            vote_average: series.score.map(f64::from),
             vote_count: None,
             genres: series
                 .genres
@@ -168,7 +168,7 @@ impl TvdbProvider {
 
 #[async_trait]
 impl MetadataProvider for TvdbProvider {
-    fn name(&self) -> &str {
+    fn name(&self) -> &'static str {
         "tvdb"
     }
 
@@ -204,7 +204,7 @@ impl MetadataProvider for TvdbProvider {
         episode: i32,
     ) -> Result<EpisodeMetadata> {
         // TVDB API v4 requires getting season ID first, then episode
-        let season_endpoint = format!("/series/{}/episodes/default?season={}", series_id, season);
+        let season_endpoint = format!("/series/{series_id}/episodes/default?season={season}");
         let season_response: TvdbEpisodesResponse = self.request(&season_endpoint).await?;
 
         let ep = season_response
@@ -214,8 +214,7 @@ impl MetadataProvider for TvdbProvider {
             .find(|e| e.number == episode)
             .ok_or_else(|| {
                 ScraperError::NotFound(format!(
-                    "Episode {} not found in season {}",
-                    episode, season
+                    "Episode {episode} not found in season {season}"
                 ))
             })?;
 

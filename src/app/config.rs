@@ -19,16 +19,15 @@ static CONFIG_MANAGER: OnceCell<ConfigManager> = OnceCell::new();
 // Default configuration path following XDG Base Directory specification
 // or AYIAH_DATA_DIR environment variable for Docker deployment
 fn default_config_path() -> PathBuf {
-    if let Ok(data_dir) = std::env::var("AYIAH_DATA_DIR") {
-        // Docker mode: use specified data directory
-        PathBuf::from(data_dir).join("config.toml")
-    } else {
-        // Native mode: follow XDG Base Directory specification
-        dirs::config_dir()
-            .unwrap_or_else(|| PathBuf::from("."))
-            .join("ayiah")
-            .join("config.toml")
-    }
+    std::env::var("AYIAH_DATA_DIR").map_or_else(
+        |_| {
+            dirs::config_dir()
+                .unwrap_or_else(|| PathBuf::from("."))
+                .join("ayiah")
+                .join("config.toml")
+        },
+        |data_dir| PathBuf::from(data_dir).join("config.toml"),
+    )
 }
 
 const ENVIRONMENT_PREFIX: &str = "AYIAH";
@@ -118,9 +117,7 @@ impl Default for LoggingConfig {
 impl ConfigManager {
     /// Create a new configuration manager instance
     pub fn new<P: AsRef<Path>>(config_path: Option<P>) -> Result<Self, ConfigError> {
-        let config_path = config_path
-            .map(|p| p.as_ref().to_path_buf())
-            .unwrap_or_else(default_config_path);
+        let config_path = config_path.map_or_else(default_config_path, |p| p.as_ref().to_path_buf());
 
         let config = Self::load_config(&config_path)?;
         Ok(Self {
@@ -131,16 +128,14 @@ impl ConfigManager {
 
     /// Initialize the global configuration manager instance
     pub fn init<P: AsRef<Path>>(config_path: Option<P>) -> Result<&'static Self, ConfigError> {
-        let config_path = config_path
-            .map(|p| p.as_ref().to_path_buf())
-            .unwrap_or_else(default_config_path);
+        let config_path = config_path.map_or_else(default_config_path, |p| p.as_ref().to_path_buf());
 
         info!("Initializing configuration from {:?}", config_path);
 
         let manager = CONFIG_MANAGER.get_or_init(|| match Self::new(Some(&config_path)) {
             Ok(manager) => manager,
             Err(e) => {
-                panic!("Failed to initialize configuration: {}", e);
+                panic!("Failed to initialize configuration: {e}");
             }
         });
 
@@ -152,6 +147,7 @@ impl ConfigManager {
         let addr = format!("{}:{}", config.server.host, config.server.port)
             .parse::<SocketAddr>()
             .expect("Invalid server address configuration");
+        drop(config);
         Ok(addr)
     }
 
@@ -173,8 +169,7 @@ impl ConfigManager {
     /// Reload the configuration
     pub fn reload(&self) -> Result<(), ConfigError> {
         let new_config = Self::load_config(&self.config_path)?;
-        let mut config = self.config.write();
-        *config = new_config;
+        *self.config.write() = new_config;
         info!("Configuration reloaded successfully");
         Ok(())
     }
@@ -182,8 +177,7 @@ impl ConfigManager {
     /// Reload the configuration from a specific path
     pub fn reload_from<P: AsRef<Path>>(&self, config_path: P) -> Result<(), ConfigError> {
         let new_config = Self::load_config(config_path)?;
-        let mut config = self.config.write();
-        *config = new_config;
+        *self.config.write() = new_config;
         info!("Configuration reloaded successfully");
         Ok(())
     }
@@ -203,8 +197,7 @@ impl ConfigManager {
             {
                 fs::create_dir_all(parent).map_err(|e| {
                     ConfigError::WriteError(format!(
-                        "Failed to create configuration directory: {}",
-                        e
+                        "Failed to create configuration directory: {e}"
                     ))
                 })?;
             }
@@ -214,7 +207,7 @@ impl ConfigManager {
                 .map_err(|e| ConfigError::ParseError(e.to_string()))?;
 
             fs::write(config_path, toml_str).map_err(|e| {
-                ConfigError::WriteError(format!("Failed to write configuration file: {}", e))
+                ConfigError::WriteError(format!("Failed to write configuration file: {e}"))
             })?;
         }
 

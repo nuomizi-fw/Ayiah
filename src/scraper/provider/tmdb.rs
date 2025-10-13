@@ -31,8 +31,9 @@ impl TmdbProvider {
     }
 
     /// Build complete image URL
+    #[allow(clippy::single_option_map)]
     fn build_image_url(&self, path: Option<&str>, size: &str) -> Option<String> {
-        path.map(|p| format!("{}/{}{}", TMDB_IMAGE_BASE, size, p))
+        path.map(|p| format!("{TMDB_IMAGE_BASE}/{size}{p}"))
     }
 
     /// Execute TMDB API request
@@ -41,7 +42,7 @@ impl TmdbProvider {
         endpoint: &str,
         params: &[(&str, &str)],
     ) -> Result<T> {
-        let mut url = format!("{}{}", TMDB_BASE_URL, endpoint);
+        let mut url = format!("{TMDB_BASE_URL}{endpoint}");
         let mut query_params = vec![("api_key", self.api_key.as_str())];
         query_params.extend_from_slice(params);
 
@@ -68,13 +69,13 @@ impl TmdbProvider {
         response
             .json::<T>()
             .await
-            .map_err(|e| ScraperError::Parse(format!("Failed to parse TMDB response: {}", e)))
+            .map_err(|e| ScraperError::Parse(format!("Failed to parse TMDB response: {e}")))
     }
 }
 
 #[async_trait]
 impl MetadataProvider for TmdbProvider {
-    fn name(&self) -> &str {
+    fn name(&self) -> &'static str {
         "tmdb"
     }
 
@@ -96,8 +97,7 @@ impl MetadataProvider for TmdbProvider {
 
         if results.is_empty() {
             Err(ScraperError::NotFound(format!(
-                "No results found for: {}",
-                query
+                "No results found for: {query}"
             )))
         } else {
             Ok(results)
@@ -126,7 +126,7 @@ impl MetadataProvider for TmdbProvider {
         season: i32,
         episode: i32,
     ) -> Result<EpisodeMetadata> {
-        let endpoint = format!("/tv/{}/season/{}/episode/{}", series_id, season, episode);
+        let endpoint = format!("/tv/{series_id}/season/{season}/episode/{episode}");
         let ep: TmdbEpisodeDetails = self.request(&endpoint, &[]).await?;
 
         Ok(EpisodeMetadata {
@@ -180,7 +180,7 @@ impl TmdbProvider {
 
     async fn get_movie_details_internal(&self, id: &str) -> Result<MovieMetadata> {
         let params = vec![("append_to_response", "external_ids")];
-        let movie: TmdbMovieDetails = self.request(&format!("/movie/{}", id), &params).await?;
+        let movie: TmdbMovieDetails = self.request(&format!("/movie/{id}"), &params).await?;
 
         Ok(MovieMetadata {
             id: movie.id.to_string(),
@@ -249,7 +249,7 @@ impl TmdbProvider {
 
     async fn get_tv_details_internal(&self, id: &str) -> Result<TvMetadata> {
         let params = vec![("append_to_response", "external_ids")];
-        let tv: TmdbTvDetails = self.request(&format!("/tv/{}", id), &params).await?;
+        let tv: TmdbTvDetails = self.request(&format!("/tv/{id}"), &params).await?;
 
         Ok(TvMetadata {
             id: tv.id.to_string(),
@@ -376,18 +376,21 @@ struct TmdbEpisodeDetails {
 
 #[derive(Debug, Deserialize)]
 struct TmdbGenre {
+    #[allow(dead_code)]
     id: i64,
     name: String,
 }
 
 #[derive(Debug, Deserialize)]
 struct TmdbCompany {
+    #[allow(dead_code)]
     id: i64,
     name: String,
 }
 
 #[derive(Debug, Deserialize)]
 struct TmdbCountry {
+    #[allow(dead_code)]
     iso_3166_1: String,
     name: String,
 }

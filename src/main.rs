@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize logging with configuration
     // Note: we're passing the manager directly as required by the logging module
     logger::init(&config_manager.read().logging)
-        .map_err(|e| format!("Logging initialization error: {}", e))?;
+        .map_err(|e| format!("Logging initialization error: {e}"))?;
 
     let conn = db::init().await?;
 

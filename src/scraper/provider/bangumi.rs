@@ -16,6 +16,7 @@ pub struct BangumiProvider {
 
 impl BangumiProvider {
     /// Create a new Bangumi provider (no API key required)
+    #[must_use] 
     pub fn new(cache: Arc<crate::scraper::ScraperCache>) -> Self {
         let config = ProviderConfig::new(BANGUMI_API_URL).with_cache_ttl(86400); // 24 hours
 
@@ -26,7 +27,7 @@ impl BangumiProvider {
 
     /// Execute Bangumi API request
     async fn request<T: for<'de> Deserialize<'de>>(&self, endpoint: &str) -> Result<T> {
-        let url = format!("{}{}", BANGUMI_API_URL, endpoint);
+        let url = format!("{BANGUMI_API_URL}{endpoint}");
 
         let response = self.base.get_with_rate_limit("bangumi", &url).await?;
 
@@ -42,7 +43,7 @@ impl BangumiProvider {
         response
             .json::<T>()
             .await
-            .map_err(|e| ScraperError::Parse(format!("Failed to parse Bangumi response: {}", e)))
+            .map_err(|e| ScraperError::Parse(format!("Failed to parse Bangumi response: {e}")))
     }
 
     // Private helper methods
@@ -53,8 +54,7 @@ impl BangumiProvider {
     ) -> Result<Vec<AnimeSearchResult>> {
         let encoded_query = urlencoding::encode(query);
         let endpoint = format!(
-            "/search/subject/{}?type=2&responseGroup=small",
-            encoded_query
+            "/search/subject/{encoded_query}?type=2&responseGroup=small"
         );
 
         let response: BangumiSearchResponse = self.request(&endpoint).await?;
@@ -85,7 +85,7 @@ impl BangumiProvider {
     }
 
     async fn get_anime_details_internal(&self, id: &str) -> Result<AnimeMetadata> {
-        let endpoint = format!("/v0/subjects/{}", id);
+        let endpoint = format!("/v0/subjects/{id}");
         let subject: BangumiSubject = self.request(&endpoint).await?;
 
         // Extract titles
@@ -131,7 +131,7 @@ impl BangumiProvider {
 
 #[async_trait]
 impl MetadataProvider for BangumiProvider {
-    fn name(&self) -> &str {
+    fn name(&self) -> &'static str {
         "bangumi"
     }
 

@@ -27,7 +27,7 @@ struct RequestRecord {
 }
 
 impl RequestRecord {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self {
             timestamps: Vec::new(),
         }
@@ -38,7 +38,7 @@ impl RequestRecord {
         self.timestamps.retain(|&t| now.duration_since(t) < window);
     }
 
-    fn can_request(&self, max_requests: usize) -> bool {
+    const fn can_request(&self, max_requests: usize) -> bool {
         self.timestamps.len() < max_requests
     }
 
@@ -74,6 +74,7 @@ impl Default for RateLimiter {
 }
 
 impl RateLimiter {
+    #[must_use] 
     pub fn new(config: RateLimitConfig) -> Self {
         Self {
             semaphore: Arc::new(Semaphore::new(config.max_concurrent)),
@@ -88,7 +89,7 @@ impl RateLimiter {
             .clone()
             .acquire_owned()
             .await
-            .map_err(|e| format!("Failed to acquire semaphore: {}", e))?;
+            .map_err(|e| format!("Failed to acquire semaphore: {e}"))?;
 
         let window = Duration::from_secs(self.config.window_seconds);
         let key = provider.to_string();
@@ -105,11 +106,10 @@ impl RateLimiter {
                 if record.can_request(self.config.max_requests) {
                     record.record_request();
                     break;
-                } else {
-                    record
-                        .next_available(window, self.config.max_requests)
-                        .unwrap_or(Duration::from_millis(100))
                 }
+                record
+                    .next_available(window, self.config.max_requests)
+                    .unwrap_or(Duration::from_millis(100))
             };
 
             tracing::debug!(
@@ -131,7 +131,8 @@ impl RateLimiter {
         self.records.clear();
     }
 
-    pub fn config(&self) -> &RateLimitConfig {
+    #[must_use] 
+    pub const fn config(&self) -> &RateLimitConfig {
         &self.config
     }
 }

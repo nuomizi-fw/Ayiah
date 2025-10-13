@@ -44,13 +44,15 @@ impl ProviderConfig {
     }
 
     /// Set rate limit
-    pub fn with_rate_limit(mut self, rate_limit: crate::scraper::RateLimitConfig) -> Self {
+    #[must_use] 
+    pub const fn with_rate_limit(mut self, rate_limit: crate::scraper::RateLimitConfig) -> Self {
         self.rate_limit = rate_limit;
         self
     }
 
     /// Set cache TTL
-    pub fn with_cache_ttl(mut self, ttl_seconds: u64) -> Self {
+    #[must_use] 
+    pub const fn with_cache_ttl(mut self, ttl_seconds: u64) -> Self {
         self.cache_ttl = ttl_seconds;
         self
     }
@@ -66,6 +68,7 @@ pub struct ProviderBase {
 
 impl ProviderBase {
     /// Create new provider base instance
+    #[must_use] 
     pub fn new(config: ProviderConfig, cache: Arc<ScraperCache>) -> Self {
         let rate_limiter = RateLimiter::new(config.rate_limit.clone());
         let client = Client::builder()

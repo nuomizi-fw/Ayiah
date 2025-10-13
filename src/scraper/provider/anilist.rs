@@ -9,13 +9,14 @@ use std::sync::Arc;
 
 const ANILIST_API_URL: &str = "https://graphql.anilist.co";
 
-/// AniList Provider
+/// `AniList` Provider
 pub struct AniListProvider {
     base: ProviderBase,
 }
 
 impl AniListProvider {
-    /// Create a new AniList provider (no API key required)
+    /// Create a new `AniList` provider (no API key required)
+    #[must_use] 
     pub fn new(cache: Arc<crate::scraper::ScraperCache>) -> Self {
         let config = ProviderConfig::new(ANILIST_API_URL).with_cache_ttl(86400); // 24 hours
 
@@ -58,7 +59,7 @@ impl AniListProvider {
         let result: AniListResponse<T> = response
             .json()
             .await
-            .map_err(|e| ScraperError::Parse(format!("Failed to parse AniList response: {}", e)))?;
+            .map_err(|e| ScraperError::Parse(format!("Failed to parse AniList response: {e}")))?;
 
         result
             .data
@@ -71,7 +72,7 @@ impl AniListProvider {
         query: &str,
         year: Option<i32>,
     ) -> Result<Vec<AnimeSearchResult>> {
-        let gql_query = r#"
+        let gql_query = r"
             query ($search: String, $year: Int) {
                 Page(page: 1, perPage: 20) {
                     media(search: $search, seasonYear: $year, type: ANIME) {
@@ -90,7 +91,7 @@ impl AniListProvider {
                     }
                 }
             }
-        "#;
+        ";
 
         let variables = serde_json::json!({
             "search": query,
@@ -111,14 +112,14 @@ impl AniListProvider {
                 year: anime.season_year,
                 poster_path: Some(anime.cover_image.large),
                 overview: anime.description,
-                score: anime.average_score.map(|s| s as f64 / 10.0),
+                score: anime.average_score.map(|s| f64::from(s) / 10.0),
                 provider: "anilist".to_string(),
             })
             .collect())
     }
 
     async fn get_anime_details_internal(&self, id: &str) -> Result<AnimeMetadata> {
-        let gql_query = r#"
+        let gql_query = r"
             query ($id: Int) {
                 Media(id: $id, type: ANIME) {
                     id
@@ -150,11 +151,11 @@ impl AniListProvider {
                     idMal
                 }
             }
-        "#;
+        ";
 
         let anime_id: i32 = id
             .parse()
-            .map_err(|_| ScraperError::Parse(format!("Invalid AniList ID: {}", id)))?;
+            .map_err(|_| ScraperError::Parse(format!("Invalid AniList ID: {id}")))?;
 
         let variables = serde_json::json!({
             "id": anime_id
@@ -167,7 +168,7 @@ impl AniListProvider {
         let format_date = |date: Option<&AniListDate>| -> Option<String> {
             date.and_then(|d| {
                 if let (Some(y), Some(m), Some(day)) = (d.year, d.month, d.day) {
-                    Some(format!("{:04}-{:02}-{:02}", y, m, day))
+                    Some(format!("{y:04}-{m:02}-{day:02}"))
                 } else {
                     None
                 }
@@ -184,7 +185,7 @@ impl AniListProvider {
             overview: anime.description,
             poster_path: Some(anime.cover_image.large),
             backdrop_path: anime.banner_image,
-            score: anime.average_score.map(|s| s as f64 / 10.0),
+            score: anime.average_score.map(|s| f64::from(s) / 10.0),
             genres: anime.genres,
             episodes: anime.episodes,
             status: Some(anime.status),
@@ -201,7 +202,7 @@ impl AniListProvider {
 
 #[async_trait]
 impl MetadataProvider for AniListProvider {
-    fn name(&self) -> &str {
+    fn name(&self) -> &'static str {
         "anilist"
     }
 

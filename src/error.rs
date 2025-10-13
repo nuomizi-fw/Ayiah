@@ -33,6 +33,7 @@ pub enum AyiahError {
 }
 
 impl AyiahError {
+    #[allow(clippy::cognitive_complexity)]
     fn code(&self) -> (StatusCode, String) {
         match self {
             Self::ApiError(err) => err.code(),
@@ -58,13 +59,13 @@ impl AyiahError {
             }
             Self::ValidationError(err) => (
                 StatusCode::BAD_REQUEST,
-                format!("Validation error: {}", err),
+                format!("Validation error: {err}"),
             ),
             Self::ScrapeError(err) => {
                 tracing::error!("Scrape error: {}", err);
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("Scrape operation failed: {}", err),
+                    format!("Scrape operation failed: {err}"),
                 )
             }
         }
@@ -169,15 +170,15 @@ impl ConfigError {
         match self {
             Self::LoadError(err) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Failed to load configuration: {}", err),
+                format!("Failed to load configuration: {err}"),
             ),
             Self::ParseError(msg) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Failed to parse configuration: {}", msg),
+                format!("Failed to parse configuration: {msg}"),
             ),
             Self::WriteError(msg) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                format!("Failed to write configuration: {}", msg),
+                format!("Failed to write configuration: {msg}"),
             ),
             Self::NotInitialized => (
                 StatusCode::INTERNAL_SERVER_ERROR,

@@ -16,16 +16,14 @@ pub async fn logger(request: Request<Body>, next: Next) -> Response<Body> {
     let request_id = request
         .headers()
         .get("x-request-id")
-        .map(|v| v.to_str().unwrap_or("-"))
-        .unwrap_or("-")
+        .map_or("-", |v| v.to_str().unwrap_or("-"))
         .to_string();
 
     // Get user agent
     let user_agent = request
         .headers()
         .get("user-agent")
-        .map(|v| v.to_str().unwrap_or("-"))
-        .unwrap_or("-")
+        .map_or("-", |v| v.to_str().unwrap_or("-"))
         .to_string();
 
     // Record start time for latency calculation
