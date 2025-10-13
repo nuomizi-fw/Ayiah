@@ -213,9 +213,7 @@ impl MetadataProvider for TvdbProvider {
             .into_iter()
             .find(|e| e.number == episode)
             .ok_or_else(|| {
-                ScraperError::NotFound(format!(
-                    "Episode {episode} not found in season {season}"
-                ))
+                ScraperError::NotFound(format!("Episode {episode} not found in season {season}"))
             })?;
 
         Ok(EpisodeMetadata {

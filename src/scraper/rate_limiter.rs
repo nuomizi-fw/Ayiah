@@ -74,7 +74,7 @@ impl Default for RateLimiter {
 }
 
 impl RateLimiter {
-    #[must_use] 
+    #[must_use]
     pub fn new(config: RateLimitConfig) -> Self {
         Self {
             semaphore: Arc::new(Semaphore::new(config.max_concurrent)),
@@ -131,7 +131,7 @@ impl RateLimiter {
         self.records.clear();
     }
 
-    #[must_use] 
+    #[must_use]
     pub const fn config(&self) -> &RateLimitConfig {
         &self.config
     }

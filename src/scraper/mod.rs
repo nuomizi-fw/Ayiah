@@ -80,7 +80,7 @@ pub struct ScraperManager {
 
 impl ScraperManager {
     /// Create a new scraper manager
-    #[must_use] 
+    #[must_use]
     pub fn new() -> Self {
         Self {
             providers: Vec::new(),
@@ -94,13 +94,13 @@ impl ScraperManager {
     }
 
     /// Get all providers
-    #[must_use] 
+    #[must_use]
     pub fn providers(&self) -> &[Box<dyn MetadataProvider>] {
         &self.providers
     }
 
     /// Get cache
-    #[must_use] 
+    #[must_use]
     pub const fn cache(&self) -> &ScraperCache {
         &self.cache
     }
@@ -141,9 +141,7 @@ impl ScraperManager {
             .providers
             .iter()
             .find(|p| p.name() == provider_name)
-            .ok_or_else(|| {
-                ScraperError::Config(format!("Provider not found: {provider_name}"))
-            })?;
+            .ok_or_else(|| ScraperError::Config(format!("Provider not found: {provider_name}")))?;
 
         provider.get_details(result).await
     }
@@ -162,9 +160,7 @@ impl ScraperManager {
             .providers
             .iter()
             .find(|p| p.name() == provider_name)
-            .ok_or_else(|| {
-                ScraperError::Config(format!("Provider not found: {provider_name}"))
-            })?;
+            .ok_or_else(|| ScraperError::Config(format!("Provider not found: {provider_name}")))?;
 
         provider
             .get_episode_details(series_id, season, episode)

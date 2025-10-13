@@ -20,7 +20,7 @@ pub enum MediaSearchResult {
 
 impl MediaSearchResult {
     /// Get ID
-    #[must_use] 
+    #[must_use]
     pub fn id(&self) -> &str {
         match self {
             Self::Movie(m) => &m.id,
@@ -30,7 +30,7 @@ impl MediaSearchResult {
     }
 
     /// Get title
-    #[must_use] 
+    #[must_use]
     pub fn title(&self) -> &str {
         match self {
             Self::Movie(m) => &m.title,
@@ -40,7 +40,7 @@ impl MediaSearchResult {
     }
 
     /// Get media type
-    #[must_use] 
+    #[must_use]
     pub const fn media_type(&self) -> MediaType {
         match self {
             Self::Movie(_) => MediaType::Movie,
@@ -50,7 +50,7 @@ impl MediaSearchResult {
     }
 
     /// Get provider name
-    #[must_use] 
+    #[must_use]
     pub fn provider(&self) -> &str {
         match self {
             Self::Movie(m) => &m.provider,
@@ -71,7 +71,7 @@ pub enum MediaDetails {
 
 impl MediaDetails {
     /// Get ID
-    #[must_use] 
+    #[must_use]
     pub fn id(&self) -> &str {
         match self {
             Self::Movie(m) => &m.id,
@@ -81,7 +81,7 @@ impl MediaDetails {
     }
 
     /// Get title
-    #[must_use] 
+    #[must_use]
     pub fn title(&self) -> &str {
         match self {
             Self::Movie(m) => &m.title,
@@ -91,7 +91,7 @@ impl MediaDetails {
     }
 
     /// Get media type
-    #[must_use] 
+    #[must_use]
     pub const fn media_type(&self) -> MediaType {
         match self {
             Self::Movie(_) => MediaType::Movie,
@@ -101,7 +101,7 @@ impl MediaDetails {
     }
 
     /// Get provider name
-    #[must_use] 
+    #[must_use]
     pub fn provider(&self) -> &str {
         match self {
             Self::Movie(m) => &m.provider,

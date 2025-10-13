@@ -16,7 +16,7 @@ pub struct AniListProvider {
 
 impl AniListProvider {
     /// Create a new `AniList` provider (no API key required)
-    #[must_use] 
+    #[must_use]
     pub fn new(cache: Arc<crate::scraper::ScraperCache>) -> Self {
         let config = ProviderConfig::new(ANILIST_API_URL).with_cache_ttl(86400); // 24 hours
 

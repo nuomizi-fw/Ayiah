@@ -16,7 +16,7 @@ pub struct BangumiProvider {
 
 impl BangumiProvider {
     /// Create a new Bangumi provider (no API key required)
-    #[must_use] 
+    #[must_use]
     pub fn new(cache: Arc<crate::scraper::ScraperCache>) -> Self {
         let config = ProviderConfig::new(BANGUMI_API_URL).with_cache_ttl(86400); // 24 hours
 
@@ -53,9 +53,7 @@ impl BangumiProvider {
         _year: Option<i32>,
     ) -> Result<Vec<AnimeSearchResult>> {
         let encoded_query = urlencoding::encode(query);
-        let endpoint = format!(
-            "/search/subject/{encoded_query}?type=2&responseGroup=small"
-        );
+        let endpoint = format!("/search/subject/{encoded_query}?type=2&responseGroup=small");
 
         let response: BangumiSearchResponse = self.request(&endpoint).await?;
 

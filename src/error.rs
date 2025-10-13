@@ -57,10 +57,9 @@ impl AyiahError {
                 tracing::error!("Serde JSON error: {}", err);
                 (StatusCode::BAD_REQUEST, "Invalid JSON format".to_string())
             }
-            Self::ValidationError(err) => (
-                StatusCode::BAD_REQUEST,
-                format!("Validation error: {err}"),
-            ),
+            Self::ValidationError(err) => {
+                (StatusCode::BAD_REQUEST, format!("Validation error: {err}"))
+            }
             Self::ScrapeError(err) => {
                 tracing::error!("Scrape error: {}", err);
                 (

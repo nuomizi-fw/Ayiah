@@ -117,7 +117,8 @@ impl Default for LoggingConfig {
 impl ConfigManager {
     /// Create a new configuration manager instance
     pub fn new<P: AsRef<Path>>(config_path: Option<P>) -> Result<Self, ConfigError> {
-        let config_path = config_path.map_or_else(default_config_path, |p| p.as_ref().to_path_buf());
+        let config_path =
+            config_path.map_or_else(default_config_path, |p| p.as_ref().to_path_buf());
 
         let config = Self::load_config(&config_path)?;
         Ok(Self {
@@ -128,7 +129,8 @@ impl ConfigManager {
 
     /// Initialize the global configuration manager instance
     pub fn init<P: AsRef<Path>>(config_path: Option<P>) -> Result<&'static Self, ConfigError> {
-        let config_path = config_path.map_or_else(default_config_path, |p| p.as_ref().to_path_buf());
+        let config_path =
+            config_path.map_or_else(default_config_path, |p| p.as_ref().to_path_buf());
 
         info!("Initializing configuration from {:?}", config_path);
 
