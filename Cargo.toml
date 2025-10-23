@@ -83,7 +83,7 @@ parking_lot = "0.12.5"
 rayon = "1.11.0"
 
 # Time and UUID
-chrono = "0.4.42"
+chrono = { version = "0.4.42", features = ["serde"] }
 uuid = { version = "1.18.1", features = ["v4"] }
 
 # Networking and HTTP client

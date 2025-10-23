@@ -50,6 +50,9 @@ pub struct AppConfig {
 
     #[serde(default)]
     pub logging: LoggingConfig,
+
+    #[serde(default)]
+    pub scraper: ScraperConfig,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -110,6 +113,28 @@ impl Default for LoggingConfig {
         Self {
             level: "info".to_string(),
             file_path: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ScraperConfig {
+    #[serde(default)]
+    pub tmdb_api_key: Option<String>,
+
+    #[serde(default)]
+    pub tvdb_api_key: Option<String>,
+
+    #[serde(default)]
+    pub cache_ttl_seconds: u64,
+}
+
+impl Default for ScraperConfig {
+    fn default() -> Self {
+        Self {
+            tmdb_api_key: None,
+            tvdb_api_key: None,
+            cache_ttl_seconds: 86400, // 24 hours
         }
     }
 }

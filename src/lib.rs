@@ -17,6 +17,7 @@ pub mod error;
 pub mod middleware;
 pub mod routes;
 pub mod scraper;
+pub mod services;
 pub mod utils;
 
 pub type ApiResult<T> = std::result::Result<ApiResponse<T>, AyiahError>;
@@ -46,4 +47,10 @@ pub struct Context {
 
     /// Database connection
     pub db: db::Database,
+
+    /// Scraper manager for metadata fetching
+    pub scraper_manager: Option<Arc<scraper::ScraperManager>>,
+
+    /// Metadata agent for fetching and saving metadata
+    pub metadata_agent: Option<Arc<services::MetadataAgent>>,
 }
