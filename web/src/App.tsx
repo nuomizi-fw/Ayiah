@@ -1,41 +1,68 @@
+import { Router, Route, A } from "@solidjs/router";
+import { Film, House, Tv } from "lucide-solid";
 import type { Component } from "solid-js";
-import { createSignal, onMount } from "solid-js";
-import { getHealth, type HealthResponse } from "./api/health";
+import HomePage from "./pages/HomePage";
+import MoviesPage from "./pages/MoviesPage";
+import TvPage from "./pages/TvPage";
+import DetailPage from "./pages/DetailPage";
 
 const App: Component = () => {
-	const [health, setHealth] = createSignal<HealthResponse | null>(null);
-	const [loading, setLoading] = createSignal(true);
-	const [error, setError] = createSignal<string | null>(null);
-
-	onMount(async () => {
-		try {
-			const response = await getHealth().send();
-			setHealth(response.data ?? null);
-		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : "Failed to fetch health status",
-			);
-		} finally {
-			setLoading(false);
-		}
-	});
-
 	return (
-		<div class="p-8">
-			<h1 class="text-3xl font-bold mb-4">Ayiah Media Server</h1>
-
-			<div class="mb-4">
-				<h2 class="text-xl font-semibold mb-2">API Health Check</h2>
-				{loading() && <p>Loading...</p>}
-				{error() && <p class="text-red-500">Error: {error()}</p>}
-				{health() && (
-					<div class="bg-green-100 p-4 rounded">
-						<p>Status: {health()!.status}</p>
-						<p>Database: {health()!.database}</p>
+		<Router>
+			<div class="min-h-screen bg-neutral-950 text-white">
+				<nav class="bg-neutral-900 border-b border-neutral-800 sticky top-0 z-50">
+					<div class="max-w-7xl mx-auto px-6 py-4">
+						<div class="flex items-center justify-between">
+							<div class="flex items-center gap-8">
+								<A
+									href="/"
+									class="text-2xl font-bold text-blue-500 hover:text-blue-400 transition-colors"
+								>
+									Ayiah
+								</A>
+								<div class="flex gap-4">
+									<A
+										href="/"
+										class="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
+										activeClass="bg-blue-600 text-white"
+										inactiveClass="text-neutral-400 hover:text-white hover:bg-neutral-800"
+										end
+									>
+										<House class="w-5 h-5" />
+										Home
+									</A>
+									<A
+										href="/movies"
+										class="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
+										activeClass="bg-blue-600 text-white"
+										inactiveClass="text-neutral-400 hover:text-white hover:bg-neutral-800"
+									>
+										<Film class="w-5 h-5" />
+										Movies
+									</A>
+									<A
+										href="/tv"
+										class="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
+										activeClass="bg-blue-600 text-white"
+										inactiveClass="text-neutral-400 hover:text-white hover:bg-neutral-800"
+									>
+										<Tv class="w-5 h-5" />
+										TV Shows
+									</A>
+								</div>
+							</div>
+						</div>
 					</div>
-				)}
+				</nav>
+
+				<main class="max-w-7xl mx-auto px-6 py-8">
+					<Route path="/" component={HomePage} />
+					<Route path="/movies" component={MoviesPage} />
+					<Route path="/tv" component={TvPage} />
+					<Route path="/detail/:id" component={DetailPage} />
+				</main>
 			</div>
-		</div>
+		</Router>
 	);
 };
 

@@ -1,6 +1,6 @@
 import { createAlova } from "alova";
-import SolidHook from "alova/solid";
 import fetchAdapter from "alova/fetch";
+import SolidHook from "alova/solid";
 
 // Create Alova instance
 export const alovaInstance = createAlova({
