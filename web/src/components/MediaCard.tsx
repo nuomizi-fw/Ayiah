@@ -47,11 +47,11 @@ const MediaCard: Component<MediaCardProps> = (props: MediaCardProps) => {
 			onClick={() => props.onClick?.()}
 		>
 			{/* Poster Image Section */}
-			<div class="relative aspect-[2/3] bg-neutral-800">
+			<div class="relative aspect-2/3 bg-neutral-800">
 				<Show
 					when={posterUrl()}
 					fallback={
-						<div class="w-full h-full flex items-center justify-center text-neutral-600 bg-gradient-to-br from-neutral-800 via-neutral-850 to-neutral-900">
+						<div class="w-full h-full flex items-center justify-center text-neutral-600 bg-linear-to-br from-neutral-800 via-neutral-850 to-neutral-900">
 							<div class="text-center p-6">
 								<Film class="w-20 h-20 mx-auto mb-4 text-neutral-600 group-hover:text-neutral-500 transition-colors" />
 								<div class="text-sm font-medium text-neutral-500 group-hover:text-neutral-400 transition-colors">

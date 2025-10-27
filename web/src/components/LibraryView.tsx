@@ -118,20 +118,22 @@ const LibraryView: Component<LibraryViewProps> = (props: LibraryViewProps) => {
 						<button
 							type="button"
 							onClick={() => setViewMode("grid")}
-							class={`px-3 py-2 transition-colors ${viewMode() === "grid"
+							class={`px-3 py-2 transition-colors ${
+								viewMode() === "grid"
 									? "bg-blue-600 text-white"
 									: "hover:bg-neutral-800"
-								}`}
+							}`}
 						>
 							<Grid class="w-5 h-5" />
 						</button>
 						<button
 							type="button"
 							onClick={() => setViewMode("list")}
-							class={`px-3 py-2 transition-colors ${viewMode() === "list"
+							class={`px-3 py-2 transition-colors ${
+								viewMode() === "list"
 									? "bg-blue-600 text-white"
 									: "hover:bg-neutral-800"
-								}`}
+							}`}
 						>
 							<List class="w-5 h-5" />
 						</button>

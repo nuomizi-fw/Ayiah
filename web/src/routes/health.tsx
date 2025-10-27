@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/solid-router";
-import { Activity, Database, CheckCircle, XCircle } from "lucide-solid";
+import { Activity, CheckCircle, Database, XCircle } from "lucide-solid";
 import { Show } from "solid-js";
 import { getHealth } from "../api/health";
 
@@ -35,9 +35,7 @@ function RouteComponent() {
 						</h2>
 						<Show
 							when={isHealthy()}
-							fallback={
-								<XCircle class="w-6 h-6 text-red-500" />
-							}
+							fallback={<XCircle class="w-6 h-6 text-red-500" />}
 						>
 							<CheckCircle class="w-6 h-6 text-green-500" />
 						</Show>
@@ -46,8 +44,9 @@ function RouteComponent() {
 						<div class="flex justify-between items-center">
 							<span class="text-neutral-400">Status:</span>
 							<span
-								class={`font-semibold ${isHealthy() ? "text-green-500" : "text-red-500"
-									}`}
+								class={`font-semibold ${
+									isHealthy() ? "text-green-500" : "text-red-500"
+								}`}
 							>
 								{healthData()?.status || "unknown"}
 							</span>
@@ -64,9 +63,7 @@ function RouteComponent() {
 						</h2>
 						<Show
 							when={isDatabaseConnected()}
-							fallback={
-								<XCircle class="w-6 h-6 text-red-500" />
-							}
+							fallback={<XCircle class="w-6 h-6 text-red-500" />}
 						>
 							<CheckCircle class="w-6 h-6 text-green-500" />
 						</Show>
@@ -75,8 +72,9 @@ function RouteComponent() {
 						<div class="flex justify-between items-center">
 							<span class="text-neutral-400">Connection:</span>
 							<span
-								class={`font-semibold ${isDatabaseConnected() ? "text-green-500" : "text-red-500"
-									}`}
+								class={`font-semibold ${
+									isDatabaseConnected() ? "text-green-500" : "text-red-500"
+								}`}
 							>
 								{healthData()?.database || "unknown"}
 							</span>
@@ -106,7 +104,9 @@ function RouteComponent() {
 
 			{/* Status Legend */}
 			<div class="bg-neutral-900/50 border border-neutral-800 rounded-lg p-4">
-				<h3 class="text-sm font-semibold text-neutral-400 mb-3">Status Legend</h3>
+				<h3 class="text-sm font-semibold text-neutral-400 mb-3">
+					Status Legend
+				</h3>
 				<div class="grid gap-2 text-sm">
 					<div class="flex items-center gap-2">
 						<CheckCircle class="w-4 h-4 text-green-500" />

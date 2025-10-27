@@ -88,7 +88,7 @@ const MediaDetail: Component<MediaDetailProps> = (props: MediaDetailProps) => {
 								alt=""
 								class="w-full h-full object-cover"
 							/>
-							<div class="absolute inset-0 bg-gradient-to-b from-transparent via-neutral-950/50 to-neutral-950" />
+							<div class="absolute inset-0 bg-linear-to-b from-transparent via-neutral-950/50 to-neutral-950" />
 						</div>
 					</Show>
 
@@ -103,8 +103,8 @@ const MediaDetail: Component<MediaDetailProps> = (props: MediaDetailProps) => {
 						</button>
 
 						<div class="flex flex-col md:flex-row gap-8 mb-8">
-							<div class="flex-shrink-0">
-								<div class="w-64 aspect-[2/3] rounded-lg overflow-hidden bg-neutral-900 shadow-2xl">
+							<div class="shrink-0">
+								<div class="w-64 aspect-2/3 rounded-lg overflow-hidden bg-neutral-900 shadow-2xl">
 									<Show
 										when={posterUrl()}
 										fallback={
@@ -245,13 +245,13 @@ const MediaDetail: Component<MediaDetailProps> = (props: MediaDetailProps) => {
 								</div>
 								<div>
 									<span class="text-neutral-400">File Size:</span>
-									<span class="ml-2">{formatFileSize(item()!.file_size)}</span>
+									<span class="ml-2">{formatFileSize(item()?.file_size)}</span>
 								</div>
 								<Show when={item()?.added_at}>
 									<div>
 										<span class="text-neutral-400">Added:</span>
 										<span class="ml-2">
-											{new Date(item()!.added_at).toLocaleDateString()}
+											{new Date(item()?.added_at).toLocaleDateString()}
 										</span>
 									</div>
 								</Show>
