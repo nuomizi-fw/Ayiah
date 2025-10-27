@@ -5,30 +5,32 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview",
+    "dev": "vinxi dev",
+    "build": "vinxi build",
+    "start": "vinxi start",
+    "version": "vinxi version",
     "format": "biome format --write ./src",
     "lint": "biome check --write --unsafe ./src"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.5",
-    "solid-devtools": "^0.34.4",
-    "typescript": "^5.9.3",
-    "vite": "^7.1.9",
-    "vite-plugin-solid": "^2.11.9"
+    "@biomejs/biome": "^2.3.1",
+    "solid-devtools": "^0.34.4"
   },
   "dependencies": {
-    "@ark-ui/solid": "^5.26.0",
-    "@solidjs/router": "^0.15.3",
-    "@tailwindcss/vite": "^4.1.14",
+    "@ark-ui/solid": "^5.26.2",
+    "@solidjs/start": "^1.2.0",
+    "@tailwindcss/vite": "^4.1.16",
+    "@tanstack/router-plugin": "^1.133.32",
+    "@tanstack/solid-router": "^1.133.31",
+    "@tanstack/solid-router-devtools": "^1.133.31",
     "alova": "^3.3.4",
-    "lucide-solid": "^0.545.0",
+    "lucide-solid": "^0.546.0",
     "solid-js": "^1.9.9",
-    "tailwindcss": "^4.1.14"
+    "tailwindcss": "^4.1.16",
+    "vinxi": "^0.5.8"
   },
   "trustedDependencies": [
+    "@parcel/watcher",
     "@tailwindcss/oxide",
     "esbuild"
   ]

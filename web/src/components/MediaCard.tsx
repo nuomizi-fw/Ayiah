@@ -9,7 +9,7 @@ interface MediaCardProps {
 	onClick?: () => void;
 }
 
-const MediaCard: Component<MediaCardProps> = (props) => {
+const MediaCard: Component<MediaCardProps> = (props: MediaCardProps) => {
 	const posterUrl = () => {
 		if (props.item.metadata?.poster_path) {
 			return `https://image.tmdb.org/t/p/w500${props.item.metadata.poster_path}`;
@@ -72,11 +72,7 @@ const MediaCard: Component<MediaCardProps> = (props) => {
 				{/* Rating Badge Overlay */}
 				<Show when={props.item.metadata?.vote_average}>
 					<div class="absolute top-2 right-2 bg-black/90 backdrop-blur-sm px-2.5 py-1.5 rounded-lg shadow-lg group-hover:bg-black/95 transition-colors">
-						<RatingGroup.Root
-							count={5}
-							value={starRating()}
-							readOnly
-						>
+						<RatingGroup.Root count={5} value={starRating()} readOnly>
 							<RatingGroup.Control class="flex gap-0.5">
 								<RatingGroup.Context>
 									{(context) => (

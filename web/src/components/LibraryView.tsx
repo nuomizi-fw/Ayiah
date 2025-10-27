@@ -1,19 +1,23 @@
 import { createListCollection, Select } from "@ark-ui/solid/select";
-import { useRequest } from "alova/client";
 import { ChevronDown, Grid, List, Search } from "lucide-solid";
-import type { Component } from "solid-js";
+import type { Accessor, Component } from "solid-js";
 import { createMemo, createSignal, For, Index, Show } from "solid-js";
 import { Portal } from "solid-js/web";
-import { getMovies, getTvShows } from "../api/library";
-import type { MediaItemWithMetadata, MediaType } from "../types/media";
+import type { ApiResponse } from "../types/api";
+import type {
+	LibraryResponse,
+	MediaItemWithMetadata,
+	MediaType,
+} from "../types/media";
 import MediaCard from "./MediaCard";
 
 interface LibraryViewProps {
 	mediaType: MediaType;
 	onItemClick: (item: MediaItemWithMetadata) => void;
+	data: Accessor<ApiResponse<LibraryResponse>>;
 }
 
-const LibraryView: Component<LibraryViewProps> = (props) => {
+const LibraryView: Component<LibraryViewProps> = (props: LibraryViewProps) => {
 	const [searchQuery, setSearchQuery] = createSignal("");
 	const [viewMode, setViewMode] = createSignal<"grid" | "list">("grid");
 	const [sortBy, setSortBy] = createSignal<string[]>(["date"]);
@@ -26,16 +30,8 @@ const LibraryView: Component<LibraryViewProps> = (props) => {
 		],
 	});
 
-	const apiCall = () => {
-		return props.mediaType === "movie" ? getMovies() : getTvShows();
-	};
-
-	const { data, loading, error } = useRequest(apiCall, {
-		initialData: { data: { items: [], total: 0 } },
-	});
-
 	const filteredItems = createMemo(() => {
-		let items = data()?.data?.items || [];
+		let items = props.data()?.data?.items || [];
 
 		if (searchQuery()) {
 			const query = searchQuery().toLowerCase();
@@ -75,6 +71,7 @@ const LibraryView: Component<LibraryViewProps> = (props) => {
 						placeholder="Search library..."
 						value={searchQuery()}
 						onInput={(e) => setSearchQuery(e.currentTarget.value)}
+						aria-label="Search library"
 						class="w-full pl-10 pr-4 py-2 bg-neutral-900 border border-neutral-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 					/>
 				</div>
@@ -121,22 +118,20 @@ const LibraryView: Component<LibraryViewProps> = (props) => {
 						<button
 							type="button"
 							onClick={() => setViewMode("grid")}
-							class={`px-3 py-2 transition-colors ${
-								viewMode() === "grid"
+							class={`px-3 py-2 transition-colors ${viewMode() === "grid"
 									? "bg-blue-600 text-white"
 									: "hover:bg-neutral-800"
-							}`}
+								}`}
 						>
 							<Grid class="w-5 h-5" />
 						</button>
 						<button
 							type="button"
 							onClick={() => setViewMode("list")}
-							class={`px-3 py-2 transition-colors ${
-								viewMode() === "list"
+							class={`px-3 py-2 transition-colors ${viewMode() === "list"
 									? "bg-blue-600 text-white"
 									: "hover:bg-neutral-800"
-							}`}
+								}`}
 						>
 							<List class="w-5 h-5" />
 						</button>
@@ -144,63 +139,52 @@ const LibraryView: Component<LibraryViewProps> = (props) => {
 				</div>
 			</div>
 
-			<Show when={loading()}>
-				<div class="flex items-center justify-center py-20">
-					<div class="text-center">
-						<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4" />
-						<p class="text-neutral-400">Loading library...</p>
-					</div>
+			<div class="space-y-4">
+				<div class="flex items-center justify-between">
+					<p class="text-neutral-400 text-sm">
+						Showing {filteredItems().length} of{" "}
+						{props.data()?.data?.items?.length || 0}{" "}
+						{filteredItems().length === 1 ? "item" : "items"}
+						{searchQuery() && (
+							<span class="text-neutral-500"> matching "{searchQuery()}"</span>
+						)}
+					</p>
 				</div>
-			</Show>
 
-			<Show when={error()}>
-				<div class="bg-red-900/20 border border-red-900 rounded-lg p-4">
-					<p class="text-red-400">Failed to load library: {error()?.message}</p>
-				</div>
-			</Show>
-
-			<Show when={!loading() && !error()}>
-				<div class="space-y-4">
-					<div class="flex items-center justify-between">
-						<p class="text-neutral-400">
-							{filteredItems().length}{" "}
-							{filteredItems().length === 1 ? "item" : "items"}
-						</p>
-					</div>
-
-					<Show
-						when={filteredItems().length > 0}
-						fallback={
-							<div class="text-center py-20">
-								<div class="text-6xl mb-4">🎬</div>
-								<p class="text-xl text-neutral-400 mb-2">No items found</p>
-								<p class="text-sm text-neutral-500">
-									{searchQuery()
-										? "Try adjusting your search"
-										: "Your library is empty"}
-								</p>
-							</div>
+				<Show
+					when={filteredItems().length > 0}
+					fallback={
+						<div class="text-center py-20">
+							<div class="text-6xl mb-4">{searchQuery() ? "🔍" : "🎬"}</div>
+							<p class="text-xl text-neutral-400 mb-2">
+								{searchQuery() ? "No results found" : "No items in library"}
+							</p>
+							<p class="text-sm text-neutral-500">
+								{searchQuery()
+									? `No items match "${searchQuery()}". Try a different search term.`
+									: "Your library is empty. Add some media to get started."}
+							</p>
+						</div>
+					}
+				>
+					<div
+						class={
+							viewMode() === "grid"
+								? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
+								: "space-y-4"
 						}
 					>
-						<div
-							class={
-								viewMode() === "grid"
-									? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
-									: "space-y-4"
-							}
-						>
-							<For each={filteredItems()}>
-								{(item) => (
-									<MediaCard
-										item={item}
-										onClick={() => props.onItemClick(item)}
-									/>
-								)}
-							</For>
-						</div>
-					</Show>
-				</div>
-			</Show>
+						<For each={filteredItems()}>
+							{(item) => (
+								<MediaCard
+									item={item}
+									onClick={() => props.onItemClick(item)}
+								/>
+							)}
+						</For>
+					</div>
+				</Show>
+			</div>
 		</div>
 	);
 };

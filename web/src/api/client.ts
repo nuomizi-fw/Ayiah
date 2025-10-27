@@ -4,7 +4,7 @@ import SolidHook from "alova/solid";
 
 // Create Alova instance
 export const alovaInstance = createAlova({
-	baseURL: "/api",
+	baseURL: import.meta.env.VITE_API_BASE_URL + "/api" || "http://127.0.0.1:7590" + "/api",
 	statesHook: SolidHook,
 	requestAdapter: fetchAdapter(),
 	responded: {
