@@ -1,10 +1,16 @@
-import { clientOnly } from "@solidjs/start";
-import { createRootRoute, Link, Outlet } from "@tanstack/solid-router";
+import {
+	createRootRouteWithContext,
+	Link,
+	Outlet,
+} from "@tanstack/solid-router";
+import { QueryClient } from "@tanstack/solid-query";
+import { TanStackRouterDevtools } from "@tanstack/solid-router-devtools";
+import { SolidQueryDevtools } from "@tanstack/solid-query-devtools";
 import { Suspense } from "solid-js";
 
-const Devtools = clientOnly(() => import("../components/Devtools"));
-
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+	queryClient: QueryClient;
+}>()({
 	component: RootComponent,
 });
 
@@ -51,7 +57,8 @@ function RootComponent() {
 					<Outlet />
 				</Suspense>
 			</main>
-			<Devtools />
+			<SolidQueryDevtools buttonPosition="top-right" />
+			<TanStackRouterDevtools position="bottom-right" />
 		</div>
 	);
 }

@@ -1,5 +1,6 @@
 import { createRouter as createTanstackSolidRouter } from "@tanstack/solid-router";
 import { routeTree } from "./routeTree.gen";
+import { queryClient } from "./app";
 
 export function createRouter() {
 	const router = createTanstackSolidRouter({
@@ -7,6 +8,9 @@ export function createRouter() {
 		defaultPreload: "intent",
 		defaultStaleTime: 5000,
 		scrollRestoration: true,
+		context: {
+			queryClient,
+		},
 	});
 	return router;
 }

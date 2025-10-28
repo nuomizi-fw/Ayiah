@@ -5,15 +5,18 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev": "vinxi dev",
-    "build": "vinxi build",
+    "dev": "bun run watch-routes && vinxi dev",
+    "build": "bun run generate-routes && vinxi build",
     "start": "vinxi start",
     "version": "vinxi version",
     "format": "biome format --write ./src",
-    "lint": "biome check --write --unsafe ./src"
+    "lint": "biome check --write --unsafe ./src",
+    "generate-routes": "tsr generate",
+    "watch-routes": "tsr watch"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.1",
+    "@tanstack/router-cli": "^1.133.29",
     "solid-devtools": "^0.34.4"
   },
   "dependencies": {
@@ -21,11 +24,13 @@
     "@solidjs/start": "^1.2.0",
     "@tailwindcss/vite": "^4.1.16",
     "@tanstack/router-plugin": "^1.133.32",
-    "@tanstack/solid-router": "^1.133.31",
-    "@tanstack/solid-router-devtools": "^1.133.31",
+    "@tanstack/solid-query": "^5.90.6",
+    "@tanstack/solid-query-devtools": "^5.90.4",
+    "@tanstack/solid-router": "^1.133.34",
+    "@tanstack/solid-router-devtools": "^1.133.34",
     "alova": "^3.3.4",
     "lucide-solid": "^0.546.0",
-    "solid-js": "^1.9.9",
+    "solid-js": "^1.9.10",
     "tailwindcss": "^4.1.16",
     "vinxi": "^0.5.8"
   },

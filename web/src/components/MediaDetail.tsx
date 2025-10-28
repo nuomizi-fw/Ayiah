@@ -245,13 +245,13 @@ const MediaDetail: Component<MediaDetailProps> = (props: MediaDetailProps) => {
 								</div>
 								<div>
 									<span class="text-neutral-400">File Size:</span>
-									<span class="ml-2">{formatFileSize(item()?.file_size)}</span>
+									<span class="ml-2">{formatFileSize(item()?.file_size!)}</span>
 								</div>
 								<Show when={item()?.added_at}>
 									<div>
 										<span class="text-neutral-400">Added:</span>
 										<span class="ml-2">
-											{new Date(item()?.added_at).toLocaleDateString()}
+											{new Date(item()?.added_at!).toLocaleDateString()}
 										</span>
 									</div>
 								</Show>

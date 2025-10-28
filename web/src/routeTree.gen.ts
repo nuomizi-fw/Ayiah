@@ -16,116 +16,116 @@ import { Route as IndexRouteImport } from "./routes/index";
 import { Route as DetailIdRouteImport } from "./routes/detail.$id";
 
 const TvRoute = TvRouteImport.update({
-  id: "/tv",
-  path: "/tv",
-  getParentRoute: () => rootRouteImport,
+	id: "/tv",
+	path: "/tv",
+	getParentRoute: () => rootRouteImport,
 } as any);
 const MovieRoute = MovieRouteImport.update({
-  id: "/movie",
-  path: "/movie",
-  getParentRoute: () => rootRouteImport,
+	id: "/movie",
+	path: "/movie",
+	getParentRoute: () => rootRouteImport,
 } as any);
 const HealthRoute = HealthRouteImport.update({
-  id: "/health",
-  path: "/health",
-  getParentRoute: () => rootRouteImport,
+	id: "/health",
+	path: "/health",
+	getParentRoute: () => rootRouteImport,
 } as any);
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
-  getParentRoute: () => rootRouteImport,
+	id: "/",
+	path: "/",
+	getParentRoute: () => rootRouteImport,
 } as any);
 const DetailIdRoute = DetailIdRouteImport.update({
-  id: "/detail/$id",
-  path: "/detail/$id",
-  getParentRoute: () => rootRouteImport,
+	id: "/detail/$id",
+	path: "/detail/$id",
+	getParentRoute: () => rootRouteImport,
 } as any);
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/health": typeof HealthRoute;
-  "/movie": typeof MovieRoute;
-  "/tv": typeof TvRoute;
-  "/detail/$id": typeof DetailIdRoute;
+	"/": typeof IndexRoute;
+	"/health": typeof HealthRoute;
+	"/movie": typeof MovieRoute;
+	"/tv": typeof TvRoute;
+	"/detail/$id": typeof DetailIdRoute;
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/health": typeof HealthRoute;
-  "/movie": typeof MovieRoute;
-  "/tv": typeof TvRoute;
-  "/detail/$id": typeof DetailIdRoute;
+	"/": typeof IndexRoute;
+	"/health": typeof HealthRoute;
+	"/movie": typeof MovieRoute;
+	"/tv": typeof TvRoute;
+	"/detail/$id": typeof DetailIdRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/health": typeof HealthRoute;
-  "/movie": typeof MovieRoute;
-  "/tv": typeof TvRoute;
-  "/detail/$id": typeof DetailIdRoute;
+	__root__: typeof rootRouteImport;
+	"/": typeof IndexRoute;
+	"/health": typeof HealthRoute;
+	"/movie": typeof MovieRoute;
+	"/tv": typeof TvRoute;
+	"/detail/$id": typeof DetailIdRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/health" | "/movie" | "/tv" | "/detail/$id";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/health" | "/movie" | "/tv" | "/detail/$id";
-  id: "__root__" | "/" | "/health" | "/movie" | "/tv" | "/detail/$id";
-  fileRoutesById: FileRoutesById;
+	fileRoutesByFullPath: FileRoutesByFullPath;
+	fullPaths: "/" | "/health" | "/movie" | "/tv" | "/detail/$id";
+	fileRoutesByTo: FileRoutesByTo;
+	to: "/" | "/health" | "/movie" | "/tv" | "/detail/$id";
+	id: "__root__" | "/" | "/health" | "/movie" | "/tv" | "/detail/$id";
+	fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  HealthRoute: typeof HealthRoute;
-  MovieRoute: typeof MovieRoute;
-  TvRoute: typeof TvRoute;
-  DetailIdRoute: typeof DetailIdRoute;
+	IndexRoute: typeof IndexRoute;
+	HealthRoute: typeof HealthRoute;
+	MovieRoute: typeof MovieRoute;
+	TvRoute: typeof TvRoute;
+	DetailIdRoute: typeof DetailIdRoute;
 }
 
 declare module "@tanstack/solid-router" {
-  interface FileRoutesByPath {
-    "/tv": {
-      id: "/tv";
-      path: "/tv";
-      fullPath: "/tv";
-      preLoaderRoute: typeof TvRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/movie": {
-      id: "/movie";
-      path: "/movie";
-      fullPath: "/movie";
-      preLoaderRoute: typeof MovieRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/health": {
-      id: "/health";
-      path: "/health";
-      fullPath: "/health";
-      preLoaderRoute: typeof HealthRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/detail/$id": {
-      id: "/detail/$id";
-      path: "/detail/$id";
-      fullPath: "/detail/$id";
-      preLoaderRoute: typeof DetailIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-  }
+	interface FileRoutesByPath {
+		"/tv": {
+			id: "/tv";
+			path: "/tv";
+			fullPath: "/tv";
+			preLoaderRoute: typeof TvRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/movie": {
+			id: "/movie";
+			path: "/movie";
+			fullPath: "/movie";
+			preLoaderRoute: typeof MovieRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/health": {
+			id: "/health";
+			path: "/health";
+			fullPath: "/health";
+			preLoaderRoute: typeof HealthRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/": {
+			id: "/";
+			path: "/";
+			fullPath: "/";
+			preLoaderRoute: typeof IndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/detail/$id": {
+			id: "/detail/$id";
+			path: "/detail/$id";
+			fullPath: "/detail/$id";
+			preLoaderRoute: typeof DetailIdRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+	}
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  HealthRoute: HealthRoute,
-  MovieRoute: MovieRoute,
-  TvRoute: TvRoute,
-  DetailIdRoute: DetailIdRoute,
+	IndexRoute: IndexRoute,
+	HealthRoute: HealthRoute,
+	MovieRoute: MovieRoute,
+	TvRoute: TvRoute,
+	DetailIdRoute: DetailIdRoute,
 };
 export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+	._addFileChildren(rootRouteChildren)
+	._addFileTypes<FileRouteTypes>();
