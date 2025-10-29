@@ -1,6 +1,6 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import { RouterProvider } from "@tanstack/solid-router";
 import { router } from "./router";
-import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 
 import "./app.css";
 

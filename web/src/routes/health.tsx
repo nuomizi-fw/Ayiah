@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/solid-router";
-import { Activity, CheckCircle, Database, XCircle } from "lucide-solid";
+import { Activity, CircleCheckBig, CircleX, Database } from "lucide-solid";
 import { Show } from "solid-js";
 import { getHealth } from "../api/health";
 
@@ -35,9 +35,9 @@ function RouteComponent() {
 						</h2>
 						<Show
 							when={isHealthy()}
-							fallback={<XCircle class="w-6 h-6 text-red-500" />}
+							fallback={<CircleX class="w-6 h-6 text-red-500" />}
 						>
-							<CheckCircle class="w-6 h-6 text-green-500" />
+							<CircleCheckBig class="w-6 h-6 text-green-500" />
 						</Show>
 					</div>
 					<div class="space-y-2">
@@ -63,9 +63,9 @@ function RouteComponent() {
 						</h2>
 						<Show
 							when={isDatabaseConnected()}
-							fallback={<XCircle class="w-6 h-6 text-red-500" />}
+							fallback={<CircleX class="w-6 h-6 text-red-500" />}
 						>
-							<CheckCircle class="w-6 h-6 text-green-500" />
+							<CircleCheckBig class="w-6 h-6 text-green-500" />
 						</Show>
 					</div>
 					<div class="space-y-2">
@@ -109,11 +109,11 @@ function RouteComponent() {
 				</h3>
 				<div class="grid gap-2 text-sm">
 					<div class="flex items-center gap-2">
-						<CheckCircle class="w-4 h-4 text-green-500" />
+						<CircleCheckBig class="w-4 h-4 text-green-500" />
 						<span class="text-neutral-300">Healthy / Connected</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<XCircle class="w-4 h-4 text-red-500" />
+						<CircleX class="w-4 h-4 text-red-500" />
 						<span class="text-neutral-300">Unhealthy / Disconnected</span>
 					</div>
 				</div>

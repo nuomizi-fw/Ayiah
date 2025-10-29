@@ -4,6 +4,7 @@ import {
 	type FetchEvent,
 	StartServer,
 } from "@solidjs/start/server";
+import { QueryClient } from "@tanstack/solid-query";
 import { createMemoryHistory } from "@tanstack/solid-router";
 import { router } from "./router";
 
@@ -15,6 +16,9 @@ const routerLoad = async (event: FetchEvent) => {
 		history: createMemoryHistory({
 			initialEntries: [path],
 		}),
+		context: {
+			queryClient: new QueryClient(),
+		},
 	});
 
 	await router.load();

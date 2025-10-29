@@ -1,6 +1,6 @@
 import { createRouter as createTanstackSolidRouter } from "@tanstack/solid-router";
-import { routeTree } from "./routeTree.gen";
 import { queryClient } from "./app";
+import { routeTree } from "./routeTree.gen";
 
 export function createRouter() {
 	const router = createTanstackSolidRouter({

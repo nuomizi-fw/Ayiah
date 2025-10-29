@@ -7,6 +7,5 @@ export interface HealthResponse {
 }
 
 export const getHealth = () => {
-	console.log(alovaInstance.options.baseURL);
 	return alovaInstance.Get<ApiResponse<HealthResponse>>("/health");
 };

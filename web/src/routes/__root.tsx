@@ -1,12 +1,14 @@
+import type { QueryClient } from "@tanstack/solid-query";
+import { SolidQueryDevtools } from "@tanstack/solid-query-devtools";
 import {
 	createRootRouteWithContext,
 	Link,
 	Outlet,
 } from "@tanstack/solid-router";
-import { QueryClient } from "@tanstack/solid-query";
 import { TanStackRouterDevtools } from "@tanstack/solid-router-devtools";
-import { SolidQueryDevtools } from "@tanstack/solid-query-devtools";
-import { Suspense } from "solid-js";
+import { ErrorBoundary, Suspense } from "solid-js";
+import ErrorMessage from "../components/ErrorMessage";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -42,6 +44,13 @@ function RootComponent() {
 								TV Shows
 							</Link>
 							<Link
+								to="/libraries"
+								class="hover:text-blue-400 transition-colors"
+								activeProps={{ class: "text-blue-500" }}
+							>
+								Libraries
+							</Link>
+							<Link
 								to="/health"
 								class="hover:text-blue-400 transition-colors"
 								activeProps={{ class: "text-blue-500" }}
@@ -53,9 +62,22 @@ function RootComponent() {
 				</div>
 			</nav>
 			<main class="container mx-auto px-4 py-8">
-				<Suspense>
-					<Outlet />
-				</Suspense>
+				<ErrorBoundary
+					fallback={(err) => (
+						<ErrorMessage
+							message={
+								err instanceof Error
+									? err.message
+									: "An unexpected error occurred"
+							}
+							onRetry={() => window.location.reload()}
+						/>
+					)}
+				>
+					<Suspense fallback={<LoadingSpinner message="Loading library..." />}>
+						<Outlet />
+					</Suspense>
+				</ErrorBoundary>
 			</main>
 			<SolidQueryDevtools buttonPosition="top-right" />
 			<TanStackRouterDevtools position="bottom-right" />

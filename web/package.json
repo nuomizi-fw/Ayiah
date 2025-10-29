@@ -5,8 +5,8 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev": "bun run watch-routes && vinxi dev",
-    "build": "bun run generate-routes && vinxi build",
+    "dev": " vinxi dev --host",
+    "build": "vinxi build",
     "start": "vinxi start",
     "version": "vinxi version",
     "format": "biome format --write ./src",
